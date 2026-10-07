@@ -1,0 +1,35 @@
+services:
+  mirocore:
+    build:
+     context: .
+     dockerfile: .docker/dockerfile
+    depends_on:
+      - db
+    
+    environment:
+      DATABASE_URL: postgresql://miroc:miroc@db:5432/miroc
+    volumes:
+      - ./src:/app/src:ro
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - miroc_network
+  db:
+    image: postgres:18
+
+    environment:
+      POSTGRES_USER: miroc
+      POSTGRES_PASSWORD: miroc
+      POSTGRES_DB: miroc
+    
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    
+    networks:
+      - miroc_network
+
+volumes:
+  postgres_data:
+
+networks:
+  miroc_network:
