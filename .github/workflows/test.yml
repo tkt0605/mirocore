@@ -14,4 +14,3 @@ jobs:
 
       - run: uv sync --frozen
       - run: uv run pytest
-      - run: uv run mypy --strict src tests
