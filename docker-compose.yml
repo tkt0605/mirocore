@@ -11,6 +11,7 @@ services:
       DATABASE_URL: postgresql://miroc:miroc@db:5432/miroc
     volumes:
       - ./src:/app/src:ro
+      - ./tests:/app/tests:ro
     security_opt:
       - no-new-privileges:true
     networks:
