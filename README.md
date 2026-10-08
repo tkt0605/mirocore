@@ -14,7 +14,12 @@ docker compose up --build
 
 テストは、以下のように実行します。
 ```bash
-docker compose run --rm app pytest
+docker compose run --rm mirocore pytest
+```
+
+コンテナ内のテストは以下で実行する。
+```bash
+uv run pthon pytest
 ```
 
 ## ヴィジョン
