@@ -1,5 +1,5 @@
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
-
+from mirocore.terminal_robot.expressive import add_prefix
 
 def main() -> None:
     print("== ターミナル・RoBotを起動しました!! ==")
@@ -21,7 +21,7 @@ def main() -> None:
                 state = transition(state, event)
             ## 以下のif-elif-else構文は、現在のStateに応じて、次のEventを指定するスクリプト
             if state == RobotState.LISTENING:
-                request = input("あなたの名前を教えてください:")
+                request = add_prefix(input("あなたの名前を教えてください:"))
                 ### 空文字の場合は、メッセージを残して、IDLE状態にする
                 if request == "":
                     state = RobotState.ERROR
@@ -35,11 +35,11 @@ def main() -> None:
                 event = RobotEvent.CONFIRM_INPUT
             
             elif state == RobotState.THINKING:
-                print("考え中...")
+                print(add_prefix("考え中..."))
                 event = RobotEvent.REPLY_READY
 
             elif state == RobotState.SPEAKING:
-                print(f"こんにちは、{request}さん")
+                print(add_prefix(f"こんにちは、{request}さん"))
                 event = RobotEvent.OUTPUT_DONE
 
             elif state == RobotState.IDLE:
@@ -49,7 +49,7 @@ def main() -> None:
                 print("エラーが発生しました。")
 
         except KeyboardInterrupt:
-            print("\n終了します。")
+            print(add_prefix("\n終了します。"))
             break
 
 if __name__ == "__main__":
