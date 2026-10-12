@@ -44,4 +44,18 @@ def test_empty_name_and_quit(monkeypatch, capsys) -> None:
 
 
 # ## requestのinput関数に`Ctrl + C`を入力すると終了するかどうか
-# def test_ctrl_c_and_quit(monkeypatch) -> None:
+def test_ctrl_c_and_quit(monkeypatch, capsys) -> None:
+    ## キーボードインタラプトを発生させるためのモック関数
+    def interrupted(_prompt: str) -> str:
+        raise KeyboardInterrupt
+    ### モック関数を設定
+    monkeypatch.setattr(
+        "builtins.input",
+        interrupted
+    )
+    ### メイン関数を実行
+    main()
+    ### 出力を確認
+    out = capsys.readouterr()
+
+    assert "終了します。" in out.out
