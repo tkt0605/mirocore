@@ -8,7 +8,6 @@ def main() -> None:
     print("===================================")
     state = RobotState.IDLE
     event = RobotEvent.START_LISTENING
-    request = ""
 
     while True:
         try:
@@ -36,10 +35,11 @@ def main() -> None:
                 event = RobotEvent.CONFIRM_INPUT
             
             elif state == RobotState.THINKING:
-                print(f"こんにちは、{request}さん")
+                print("考え中...")
                 event = RobotEvent.REPLY_READY
 
             elif state == RobotState.SPEAKING:
+                print(f"こんにちは、{request}さん")
                 event = RobotEvent.OUTPUT_DONE
 
             elif state == RobotState.IDLE:
