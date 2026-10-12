@@ -23,7 +23,15 @@ def main() -> None:
             ## 以下のif-elif-else構文は、現在のStateに応じて、次のEventを指定するスクリプト
             if state == RobotState.LISTENING:
                 request = input("あなたの名前を教えてください:")
-                if request in { "/q", "/quit", "/exit" }:
+                ### 空文字の場合は、メッセージを残して、IDLE状態にする
+                if request == "":
+                    state = RobotState.ERROR
+                    event = RobotEvent.ERROR_SHOWN
+                    print("===================================")
+                    print("@@ 空文字では誰かはわかりません @@")
+                    print("===================================")
+                    continue
+                elif request in { "/q", "/quit", "/exit" }:
                     break
                 event = RobotEvent.CONFIRM_INPUT
             
