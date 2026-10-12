@@ -1,7 +1,5 @@
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 
-def break_loop():
-    return True
 
 def main() -> None:
     print("== ターミナル・RoBotを起動しました!! ==")
@@ -21,10 +19,14 @@ def main() -> None:
             state = RobotState.ERROR
             event = RobotEvent.ERROR_SHOWN
             state = transition(state, event)
-
+        except KeyboardInterrupt:
+            print("\n終了します。")
+            break
         ## 以下のif-elif-else構文は、現在のStateに応じて、次のEventを指定するスクリプト
         if state == RobotState.LISTENING:
             request = input("あなたの名前を教えてください:")
+            if request in { "/q", "/quit", "/exit" }:
+                break
             event = RobotEvent.CONFIRM_INPUT
 
         elif state == RobotState.THINKING:
@@ -40,6 +42,6 @@ def main() -> None:
         elif state == RobotState.ERROR:
             print("エラーが発生しました。")
             event = RobotEvent.ERROR_SHOWN
-            
+
 if __name__ == "__main__":
     main()

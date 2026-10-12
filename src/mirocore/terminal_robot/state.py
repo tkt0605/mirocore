@@ -1,5 +1,3 @@
-## ここでは、idleの正常な状態と、Errorの状態を定義しています。
-
 from enum import Enum
 
 class RobotState(Enum):
