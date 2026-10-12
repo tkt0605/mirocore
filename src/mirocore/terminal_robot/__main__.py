@@ -9,6 +9,7 @@ def main() -> None:
     state = RobotState.IDLE
     event = RobotEvent.START_LISTENING
     is_user = True
+    # is_thinking = False
     while True:
         try:
             ## ここは、状態遷移用の関数を読み出すためのスクリプト
@@ -22,7 +23,8 @@ def main() -> None:
             ## 以下のif-elif-else構文は、現在のStateに応じて、次のEventを指定するスクリプト
             if state == RobotState.LISTENING:
                 print("名前を入力してください:")
-                request = add_prefix(is_user, "")
+                req_message = input("あなた > ")
+                request = add_prefix(is_user, req_message)
                 ### 空文字の場合は、メッセージを残して、IDLE状態にする
                 if request == "":
                     state = RobotState.ERROR
@@ -37,14 +39,18 @@ def main() -> None:
             
             elif state == RobotState.THINKING:
                 # print(add_prefix("考え中..."))
-                print(add_prefix(not is_user, "考え中..."))
+                # is_thinking = True
+                is_user = False
+                print(add_prefix(is_user, "考え中..."))
                 event = RobotEvent.REPLY_READY
 
             elif state == RobotState.SPEAKING:
-                print(add_prefix(not is_user, f"こんにちは、{request}さん"))
+                is_user = False
+                print(add_prefix(is_user, f"こんにちは、{request}さん"))
                 event = RobotEvent.OUTPUT_DONE
 
             elif state == RobotState.IDLE:
+                is_user = True  
                 event = RobotEvent.START_LISTENING
 
             elif state == RobotState.ERROR:

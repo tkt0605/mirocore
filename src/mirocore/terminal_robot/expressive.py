@@ -4,8 +4,7 @@
 
 def add_prefix(is_user:bool, message: str) -> str:
     if is_user:
-        request = input("あなた > ")
-        return request
+        return message
     else:
         return "Miroc > " + message
 
