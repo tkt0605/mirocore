@@ -1,13 +1,13 @@
 ## terminal・Robotのターミナル管理用のモジュール
 
-## ターミナルの表示の前に、出力内容によって「YOU:」or「ROBOT:」を追加する。
-def add_prefix(message: str) -> str:
-    if message.startswith("あなたの名前を教えてください:"):
-        return "YOU >" + message
-    elif message.startswith("考え中..."):
-        return "ROBOT >" + message
+# ターミナルの表示の前に、出力内容によって「YOU:」or「ROBOT:」を追加する。
+
+def add_prefix(is_user:bool, message: str) -> str:
+    if is_user:
+        request = input("あなた > ")
+        return request
     else:
-        return "YOU >" + message
+        return "Miroc > " + message
 
 ## 「考え中...」の後にloading用（例で言うと、npm i ora）の点々を追加する。
 
