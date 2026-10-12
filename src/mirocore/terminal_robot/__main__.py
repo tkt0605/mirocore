@@ -26,17 +26,20 @@ def main() -> None:
         if state == RobotState.LISTENING:
             request = input("あなたの名前を教えてください:")
             event = RobotEvent.CONFIRM_INPUT
+
         elif state == RobotState.THINKING:
             print(f"こんにちは、「{request}」さん")
             event = RobotEvent.REPLY_READY
+
         elif state == RobotState.SPEAKING:
             event = RobotEvent.OUTPUT_DONE
+
+        elif state == RobotState.IDLE:
+            event = RobotEvent.START_LISTENING
+
         elif state == RobotState.ERROR:
             print("エラーが発生しました。")
             event = RobotEvent.ERROR_SHOWN
-        elif state == RobotState.IDLE:
-            break_loop()
-            break
-
+            
 if __name__ == "__main__":
     main()
