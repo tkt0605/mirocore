@@ -7,15 +7,17 @@ import pytest
 # テスト用の一言テスト
 
 ## 初期条件から、名前を入力して永続化したかどうか
-def test_bot_name_and_quit(monkeypatch) -> None:
-    answers = iter(["太郎"])
+def test_bot_name_and_quit(monkeypatch, capsys) -> None:
+    answers = iter(["太郎", "/q"])
     monkeypatch.setattr(
         "builtins.input",
         lambda _: next(answers)
     )
-    
+
     main()
 
+    out = capsys.readouterr()
+    assert "こんにちは、太郎さん" in out.out
 ## transition関数のテスト
 def test_transition_function() -> None:
     state = RobotState.IDLE
@@ -28,8 +30,18 @@ def test_transition_function() -> None:
     assert state == RobotState.THINKING
 
 ## 空文字 "" も終了し、「こんにちは、名前さん」は出ず、IDLE状態に戻るかどうか
+def test_empty_name_and_quit(monkeypatch, capsys) -> None:
+    answers = iter(["", "/q"])
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(answers)
+    )
+    main()
+    out = capsys.readouterr()
+    assert "===================================" in out.out
+    assert "@@ 空文字では誰かはわかりません @@" in out.out
+    assert "===================================" in out.out
 
-## requestのinput関数に`/q, /quit, /exit`を入力すると終了するかどうか
 
-
-## requestのinput関数に`Cntl + C`を入力すると終了するかどうか
+# ## requestのinput関数に`Ctrl + C`を入力すると終了するかどうか
+# def test_ctrl_c_and_quit(monkeypatch) -> None:
