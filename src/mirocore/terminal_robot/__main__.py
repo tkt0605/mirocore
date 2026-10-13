@@ -12,6 +12,8 @@ def main() -> None:
         try:
             ## ここは、状態遷移用の関数を読み出すためのスクリプト
             try:
+                ## IDLE状態
+                print(add_prefix(False, state) + "名前を入力してください")
                 state = transition(state, event)
             except KeyError as err:
                 print(f"エラーが発生しました: {err}")
@@ -20,9 +22,8 @@ def main() -> None:
                 state = transition(state, event)
             ## 以下のif-elif-else構文は、現在のStateに応じて、次のEventを指定するスクリプト
             if state == RobotState.LISTENING:
-                print("名前を入力してください:")
                 # request = add_prefix(is_user)
-                request = input(add_prefix(True))
+                request = input(add_prefix(True, state))
                 ### 空文字の場合は、メッセージを残して、IDLE状態にする
                 if request == "":
                     state = RobotState.ERROR
@@ -36,21 +37,18 @@ def main() -> None:
                 event = RobotEvent.CONFIRM_INPUT
             
             elif state == RobotState.THINKING:
-                # print(add_prefix("考え中..."))
-                # is_thinking = True
-                # print(add_prefix(is_user, "考え中..."))
-                print(add_prefix(False) + "考え中...🤔")
+                print(add_prefix(False, state) + "考え中")
                 event = RobotEvent.REPLY_READY
 
             elif state == RobotState.SPEAKING:
-                print(add_prefix(False) + f"こんにちは、{request}さん")
+                print(add_prefix(False, state) + f"こんにちは、{request}さん")
                 event = RobotEvent.OUTPUT_DONE
 
             elif state == RobotState.IDLE:
                 event = RobotEvent.START_LISTENING
 
             elif state == RobotState.ERROR:
-                print("エラーが発生しました。")
+                print(add_prefix(False, state) + "エラーが発生しました。")
 
         except KeyboardInterrupt:
             print("\n終了します。")
