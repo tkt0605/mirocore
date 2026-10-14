@@ -6,6 +6,7 @@ class RobotState(Enum):
     LISTENING = "listening"
     THINKING = "thinking"
     SPEAKING = "speaking"
+    EMPTY = "empty"
 
 ## ここでは、状態変化のきっかけを表すイベントを定義。
 class RobotEvent(Enum):
@@ -14,6 +15,7 @@ class RobotEvent(Enum):
     REPLY_READY = "# 返答完成"
     OUTPUT_DONE = "# 出力完了"
     ERROR_SHOWN = "# エラー表示"
+    EMPTY_INPUT = "# 空文字入力"
 
 ## ここでは、状態遷移ルールを定義している。
 _TRANSITIONS: dict[tuple[RobotState, RobotEvent], RobotState] = {
@@ -21,7 +23,8 @@ _TRANSITIONS: dict[tuple[RobotState, RobotEvent], RobotState] = {
     (RobotState.LISTENING, RobotEvent.CONFIRM_INPUT): RobotState.THINKING,
     (RobotState.THINKING, RobotEvent.REPLY_READY): RobotState.SPEAKING,
     (RobotState.SPEAKING, RobotEvent.OUTPUT_DONE): RobotState.IDLE,
-    (RobotState.ERROR, RobotEvent.ERROR_SHOWN): RobotState.IDLE
+    (RobotState.ERROR, RobotEvent.ERROR_SHOWN): RobotState.IDLE,
+    (RobotState.EMPTY, RobotEvent.EMPTY_INPUT): RobotState.LISTENING
 }
 
 def transition(state: RobotState, event: RobotEvent) -> RobotState:

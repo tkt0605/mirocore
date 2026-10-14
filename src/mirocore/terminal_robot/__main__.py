@@ -23,11 +23,13 @@ def main() -> None:
             if state == RobotState.LISTENING:
                 print(add_prefix(False, state) + "あなたのお名前は？")
                 request = input(add_prefix(True, state))
-                if request == "":
-                    state, event =handle_empty_input(request)
+                if request in { "", " ", "　" }:
+                    state = RobotState.EMPTY
+                    event = RobotEvent.EMPTY_INPUT
                     print(add_prefix(False, state) + "空白では誰か分からないよ．．．")
                     continue
                 elif request in { "/q", "/quit", "/exit" }:
+                    print("\n終了します。")
                     break
                 event = RobotEvent.CONFIRM_INPUT
             
@@ -45,14 +47,12 @@ def main() -> None:
         except KeyboardInterrupt:
             print("\n終了します。")
             break
-## 空文字の場合のエラーハンドリング用の関数
-def handle_empty_input(request: str) -> tuple[RobotState, RobotEvent]:
-    if request == "":
-        state = RobotState.ERROR
-        event = RobotEvent.ERROR_SHOWN
-        return state, event
-    else:
-        return None, None
+# ## 空文字の場合のエラーハンドリング用の関数
+# def handle_empty_input(request: str) -> tuple[RobotState, RobotEvent]:
+#     if request == "":
+#         state = RobotState.EMPTY
+#         event = RobotEvent.EMPTY_INPUT
+#         return state, event
 
 if __name__ == "__main__":
     main()

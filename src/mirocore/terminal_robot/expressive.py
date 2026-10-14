@@ -13,6 +13,8 @@ def add_prefix(is_user:bool, state) -> str:
             return "(•_•)"
         elif state == state.SPEAKING:
             return "(^‿^)"
+        elif state == state.EMPTY:
+            return "(・o・)"
         else:
             return "(×_×)"
     
