@@ -13,7 +13,6 @@ def main() -> None:
         try:
             ## ここは、状態遷移用の関数を読み出すためのスクリプト
             try:
-                ## IDLE状態
                 state = transition(state, event)
             except KeyError as err:
                 print(f"エラーが発生しました: {err}")
@@ -24,7 +23,6 @@ def main() -> None:
             if state == RobotState.LISTENING:
                 print(add_prefix(False, state) + "あなたのお名前は？")
                 request = input(add_prefix(True, state))
-                ### 空文字の場合は、メッセージを残して、IDLE状態にする
                 if request == "":
                     state, event =handle_empty_input(request)
                     print(add_prefix(False, state) + "空白では誰か分からないよ．．．")
@@ -48,11 +46,13 @@ def main() -> None:
             print("\n終了します。")
             break
 ## 空文字の場合のエラーハンドリング用の関数
-def handle_empty_input(request: str) -> None:
+def handle_empty_input(request: str) -> tuple[RobotState, RobotEvent]:
     if request == "":
         state = RobotState.ERROR
         event = RobotEvent.ERROR_SHOWN
-    return state, event
+        return state, event
+    else:
+        return None, None
 
 if __name__ == "__main__":
     main()
