@@ -26,7 +26,8 @@ def main() -> None:
                 request = input(add_prefix(True, state))
                 ### 空文字の場合は、メッセージを残して、IDLE状態にする
                 if request == "":
-                    state = RobotState.ERROR
+                    state, event =handle_empty_input(request)
+                    print(add_prefix(False, state) + "空白では誰か分からないよ．．．")
                     continue
                 elif request in { "/q", "/quit", "/exit" }:
                     break
@@ -43,13 +44,15 @@ def main() -> None:
             elif state == RobotState.IDLE:
                 event = RobotEvent.START_LISTENING
 
-            elif state == RobotState.ERROR:
-                event = RobotEvent.ERROR_SHOWN
-                print(add_prefix(False, state) + "エラーが発生しました。")
-
         except KeyboardInterrupt:
             print("\n終了します。")
             break
+## 空文字の場合のエラーハンドリング用の関数
+def handle_empty_input(request: str) -> None:
+    if request == "":
+        state = RobotState.ERROR
+        event = RobotEvent.ERROR_SHOWN
+    return state, event
 
 if __name__ == "__main__":
     main()
