@@ -38,9 +38,7 @@ def test_empty_name_and_quit(monkeypatch, capsys) -> None:
     )
     main()
     out = capsys.readouterr()
-    assert "===================================" in out.out
-    assert "@@ 空文字では誰かはわかりません @@" in out.out
-    assert "===================================" in out.out
+    assert "空白では誰か分からないよ．．．" in out.out
 
 
 # ## requestのinput関数に`Ctrl + C`を入力すると終了するかどうか

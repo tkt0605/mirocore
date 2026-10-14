@@ -2,9 +2,10 @@ from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.expressive import add_prefix
 
 def main() -> None:
+    emoji = add_prefix(False,RobotState.IDLE)
     print("== ターミナル・RoBotを起動しました!! ==")
     print("===================================")
-    print("!!@@HELLO WORLD@@!!")
+    print(emoji + "!!@@HELLO WORLD@@!!")
     print("===================================")
     state = RobotState.IDLE
     event = RobotEvent.START_LISTENING
@@ -13,7 +14,6 @@ def main() -> None:
             ## ここは、状態遷移用の関数を読み出すためのスクリプト
             try:
                 ## IDLE状態
-                print(add_prefix(False, state) + "名前を入力してください")
                 state = transition(state, event)
             except KeyError as err:
                 print(f"エラーが発生しました: {err}")
@@ -22,15 +22,13 @@ def main() -> None:
                 state = transition(state, event)
             ## 以下のif-elif-else構文は、現在のStateに応じて、次のEventを指定するスクリプト
             if state == RobotState.LISTENING:
-                # request = add_prefix(is_user)
+                print(add_prefix(False, state), "あなたのお名前は？")
                 request = input(add_prefix(True, state))
                 ### 空文字の場合は、メッセージを残して、IDLE状態にする
                 if request == "":
                     state = RobotState.ERROR
                     event = RobotEvent.ERROR_SHOWN
-                    print("===================================")
-                    print("@@ 空文字では誰かはわかりません @@")
-                    print("===================================")
+                    print(add_prefix(False, state)+ "空白では誰か分からないよ．．．")
                     continue
                 elif request in { "/q", "/quit", "/exit" }:
                     break
