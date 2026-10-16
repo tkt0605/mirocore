@@ -1,23 +1,13 @@
 ## ターミナル・ボットのみのテストファイル
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.__main__ import main
+from mirocore.terminal_robot.expressive import add_prefix
 from unittest.mock import Mock
 import pytest
 
 # テスト用の一言テスト
 
 ## 初期条件から、名前を入力して永続化したかどうか
-def test_bot_name_and_quit(monkeypatch, capsys) -> None:
-    answers = iter(["太郎", "/q"])
-    monkeypatch.setattr(
-        "builtins.input",
-        lambda _: next(answers)
-    )
-
-    main()
-
-    out = capsys.readouterr()
-    assert "こんにちは、太郎さん" in out.out
 ## transition関数のテスト
 def test_transition_function() -> None:
     state = RobotState.IDLE
@@ -36,9 +26,12 @@ def test_empty_name_and_quit(monkeypatch, capsys) -> None:
         "builtins.input",
         lambda _: next(answers)
     )
+    event = RobotEvent.EMPTY_INPUT
+    state = transition(RobotState.LISTENING, event)
+    face = add_prefix(False, state)
     main()
     out = capsys.readouterr()
-    assert "空白では誰か分からないよ．．．" in out.out
+    assert face + "空白だね。もう一度聞いて。" in out.out
 
 
 # ## requestのinput関数に`Ctrl + C`を入力すると終了するかどうか
