@@ -23,9 +23,11 @@ def main() -> None:
             if state == RobotState.LISTENING:
                 print(add_prefix(False, state) + "あなたのお名前は？")
                 request = input(add_prefix(True, state))
-                if request in { "", " ", "　" }:
-                    state = RobotState.EMPTY
+                if request.isspace() or request == "":
+                    ## ここではまだ、stateはListeningのままである
                     event = RobotEvent.EMPTY_INPUT
+                    ## ここでは、stateをEMPTYにする
+                    state = transition(state, event)
                     print(add_prefix(False, state) + "空白では誰か分からないよ．．．")
                     continue
                 elif request in { "/q", "/quit", "/exit" }:
@@ -47,12 +49,7 @@ def main() -> None:
         except KeyboardInterrupt:
             print("\n終了します。")
             break
-# ## 空文字の場合のエラーハンドリング用の関数
-# def handle_empty_input(request: str) -> tuple[RobotState, RobotEvent]:
-#     if request == "":
-#         state = RobotState.EMPTY
-#         event = RobotEvent.EMPTY_INPUT
-#         return state, event
+
 
 if __name__ == "__main__":
     main()
