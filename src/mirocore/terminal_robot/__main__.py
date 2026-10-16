@@ -1,6 +1,6 @@
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.expressive import add_prefix
-
+from mirocore.terminal_robot.reply import reply
 def main() -> None:
     emoji = add_prefix(False,RobotState.IDLE)
     print("== ターミナル・RoBotを起動しました!! ==")
@@ -14,6 +14,7 @@ def main() -> None:
             ## ここは、状態遷移用の関数を読み出すためのスクリプト
             try:
                 state = transition(state, event)
+                ### reply機能を追加・実行。
             except KeyError as err:
                 print(f"エラーが発生しました: {err}")
                 state = RobotState.ERROR
@@ -40,7 +41,7 @@ def main() -> None:
                 event = RobotEvent.REPLY_READY
 
             elif state == RobotState.SPEAKING:
-                print(add_prefix(False, state) + f"こんにちは、{request}さん")
+                reply(state, False, request)
                 event = RobotEvent.OUTPUT_DONE
 
             elif state == RobotState.IDLE:
