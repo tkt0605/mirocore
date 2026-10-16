@@ -1,7 +1,5 @@
-from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
-from mirocore.terminal_robot.expressive import add_prefix
+## 返信用スクリプト作成のモジュール
 
-def reply(state: RobotState, is_user:bool, request: str) -> None:
-    face = add_prefix(is_user, state)
 
-    print(face + f"こんにちは、{request}さん")
+def reply(request: str) -> str:
+    return f"こんにちは、{request}さん"

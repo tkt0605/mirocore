@@ -16,7 +16,7 @@ def main() -> None:
                 state = transition(state, event)
                 ### reply機能を追加・実行。
             except KeyError as err:
-                print(f"エラーが発生しました: {err}")
+                print(f"エラーが発生しました: {err}\n")
                 state = RobotState.ERROR
                 event = RobotEvent.ERROR_SHOWN
                 state = transition(state, event)
@@ -25,23 +25,24 @@ def main() -> None:
                 print(add_prefix(False, state) + "あなたのお名前は？")
                 request = input(add_prefix(True, state))
                 if request.isspace() or request == "":
-                    ## ここではまだ、stateはListeningのままである
                     event = RobotEvent.EMPTY_INPUT
-                    ## ここでは、stateをEMPTYにする
                     state = transition(state, event)
-                    print(add_prefix(False, state) + "空白では誰か分からないよ．．．")
+                    face = add_prefix(False, state)
+                    print(face + "空白では誰か分からないよ．．．")
                     continue
                 elif request in { "/q", "/quit", "/exit" }:
                     print("\n終了します。")
                     break
                 event = RobotEvent.CONFIRM_INPUT
-            
+
             elif state == RobotState.THINKING:
                 print(add_prefix(False, state) + "考え中")
+                reply_text = reply(request)
                 event = RobotEvent.REPLY_READY
 
             elif state == RobotState.SPEAKING:
-                reply(state, False, request)
+                face = add_prefix(False, state)
+                print(face + reply_text)
                 event = RobotEvent.OUTPUT_DONE
 
             elif state == RobotState.IDLE:
