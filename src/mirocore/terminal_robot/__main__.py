@@ -1,12 +1,9 @@
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.expressive import add_prefix
-from mirocore.terminal_robot.reply import reply, setup_build_to_user_name
+from mirocore.terminal_robot.reply import reply
 def main() -> None:
-    emoji = add_prefix(False,RobotState.IDLE)
+    # emoji = add_prefix(False,RobotState.IDLE)
     print("== ターミナル・RoBotを起動しました!! ==")
-    print("===================================")
-    print(emoji + setup_build_to_user_name())
-    print("===================================")
     state = RobotState.IDLE
     event = RobotEvent.START_LISTENING
     while True:
