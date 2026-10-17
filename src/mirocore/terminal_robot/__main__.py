@@ -10,6 +10,7 @@ def main() -> None:
         try:
             ## ここは、状態遷移用の関数を読み出すためのスクリプト
             try:
+                ### ここで、LISTENINGになっている
                 state = transition(state, event)
                 ### reply機能を追加・実行。
             except KeyError as err:
@@ -26,6 +27,7 @@ def main() -> None:
                     state = transition(state, event)
                     face = add_prefix(False, state)
                     print(face + "空白だね。もう一度聞いて。")
+                    event = RobotEvent.START_LISTENING
                     continue
                 elif request in { "/q", "/quit", "/exit" }:
                     print("\n終了します。")
