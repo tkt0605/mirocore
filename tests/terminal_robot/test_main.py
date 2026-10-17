@@ -1,4 +1,5 @@
 ## ターミナル・ボットのみのテストファイル
+from _pytest.assertion.rewrite import AssertionRewriter
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.__main__ import main
 from mirocore.terminal_robot.expressive import add_prefix
@@ -21,17 +22,26 @@ def test_transition_function() -> None:
 
 ## 空文字 "" も終了し、「こんにちは、名前さん」は出ず、IDLE状態に戻るかどうか
 def test_empty_name_and_quit(monkeypatch, capsys) -> None:
+    # answers = iter(["", "/q"])
+    # monkeypatch.setattr(
+    #     "builtins.input",
+    #     lambda _: next(answers)
+    # )
+    # event = RobotEvent.EMPTY_INPUT
+    # state = transition(RobotState.LISTENING, event)
+    # face = add_prefix(False, state)
+    # main()
+    # out = capsys.readouterr()
+    # assert face + "空白だね。もう一度聞いて。" in out.out
     answers = iter(["", "/q"])
     monkeypatch.setattr(
         "builtins.input",
         lambda _: next(answers)
     )
-    event = RobotEvent.EMPTY_INPUT
-    state = transition(RobotState.LISTENING, event)
-    face = add_prefix(False, state)
     main()
     out = capsys.readouterr()
-    assert face + "空白だね。もう一度聞いて。" in out.out
+    assert "MIROC(・o・) > 空白だね。もう一度聞いて。" in out.out
+    assert "終了します。" in out.out
 
 
 # ## requestのinput関数に`Ctrl + C`を入力すると終了するかどうか
