@@ -12,6 +12,11 @@ Miroc Core v0.0.1では、まず開発環境と基本的な、ベーシックな
 docker compose up --build
 ```
 
+リポジトリ直下で、次のコマンドを実行してください。
+```bash
+uv run python -m mirocore.terminal_robot
+```
+
 テストは、以下のように実行します。
 ```bash
 docker compose run --rm mirocore uv run pytest
