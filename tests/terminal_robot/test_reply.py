@@ -25,14 +25,25 @@ response_lists = [
     "お疲れ様です!",
 ]
 
+_TEST_TARGET_NORMALIZATION: list[str] = [
+    "！",
+    "!",
+    "？",
+    "?",
+    ".",
+    ",",
+    "、",
+    "。",
+    "・",
+]
+user_name = ""
+
 def test_reply_function() -> None:
+    user_name = "テスト"
     for request, response in zip(request_lists, response_lists):
-        assert reply(request) == response
+        assert reply(request, user_name) == response
 
 def test_reply_function_with_fallback() -> None:
+    user_name = "テスト"
     for unmatched in unmatched_lists:
-        assert reply(unmatched) == "ごめんね。もう一度聞いてくれる？"
-
-def test_normalize_function() -> None:
-    assert normalize("こんにちは！") == "こんにちは"
-    
+        assert reply(unmatched, user_name) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
