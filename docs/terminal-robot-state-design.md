@@ -22,7 +22,7 @@ uv run python -m mirocore.terminal_robot
 | 状態遷移 | `terminal_robot/state.py` | 実装済み | 現在状態とイベントから次状態を決定する |
 | 進行制御と入出力 | `terminal_robot/__main__.py` | 実装済み | 入力、イベントの選択、表示、終了を順番に進める |
 | 表情と表示プレフィックス | `terminal_robot/expressive.py` | 実装済み | 状態に応じた顔と発話者を表現する |
-| 応答生成 | `terminal_robot/reply.py` | 未実装 | 固定応答を生成する責務を配置する。現在の固定応答は`__main__.py`にある |
+| 応答生成 | `terminal_robot/reply.py` | 実装ずみ | 固定応答を生成する責務を配置する。現在の固定応答は`__main__.py`にある |
 
 `transition()`は入出力を行わない純粋な遷移関数として保ちます。将来LLMを接続する場合も、状態遷移や実行権限をLLMへ移しません。
 
