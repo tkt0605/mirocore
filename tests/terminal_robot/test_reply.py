@@ -1,4 +1,4 @@
-from mirocore.terminal_robot.reply import reply
+from mirocore.terminal_robot.reply import reply, normalize
 import pytest
 
 request_lists = [
@@ -32,3 +32,7 @@ def test_reply_function() -> None:
 def test_reply_function_with_fallback() -> None:
     for unmatched in unmatched_lists:
         assert reply(unmatched) == "ごめんね。もう一度聞いてくれる？"
+
+def test_normalize_function() -> None:
+    assert normalize("こんにちは！") == "こんにちは"
+    
