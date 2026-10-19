@@ -1,4 +1,3 @@
-from tkinter import RADIOBUTTON
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.expressive import add_prefix
 from mirocore.terminal_robot.reply import reply
@@ -16,21 +15,33 @@ def terminal_robot_state(state: RobotState, event: RobotEvent) -> RobotState:
         state = transition(state, event)
     return state
 
-def terminal_robot_event(state: RobotState) -> RobotEvent:
-    if state == RobotState.IDLE:
-        event = RobotEvent.START_LISTENING
-    elif state == RobotState.LISTENING:
-        event = RobotEvent.CONFIRM_INPUT
-    elif state == RobotState.THINKING:
-        event = RobotEvent.REPLY_READY
-    elif state == RobotState.SPEAKING:
-        event = RobotEvent.OUTPUT_DONE
-    
-    elif state == RobotState.ERROR:
-        event = RobotEvent.ERROR_SHOWN
-    elif state == RobotState.EMPTY:
-        event = RobotEvent.START_LISTENING
-    return event
+def on_listening(state: RobotState) -> tuple[RobotEvent,str]:
+    face = add_prefix(False, state)
+    print(face + "待ってるよ")
+    request = input(add_prefix(True, state))
+    if request.strip() == "":
+        return RobotEvent.EMPTY_INPUT, ""
+    return RobotEvent.CONFIRM_INPUT, request
+
+def on_thinking(state: RobotState, request: str) -> tuple[RobotEvent,str]:
+    face = add_prefix(False, state)
+    print(face + "考え中")
+    return RobotEvent.REPLY_READY, reply(request)
+
+
+def on_speaking(state: RobotState, reply_text: str) -> RobotEvent:
+    face = add_prefix(False, state)
+    print(face + reply_text)
+    return RobotEvent.OUTPUT_DONE
+
+def on_empty(state: RobotState) -> RobotEvent:
+    face = add_prefix(False, state)
+    print(face + "空白だね。もう一度聞いて。")
+    return RobotEvent.START_LISTENING
+
+def on_idle(state:RobotState) -> RobotEvent:
+    return RobotEvent.START_LISTENING
+
 def main() -> None:
     # emoji = add_prefix(False,RobotState.IDLE)
     print("== ターミナル・RoBotを起動しました!! ==")
@@ -40,35 +51,44 @@ def main() -> None:
     while True:
         try:
             state = terminal_robot_state(state, event)
-            ## 以下のif-elif-else構文は、現在のStateに応じて、次のEventを指定するスクリプト
             if state == RobotState.LISTENING:
-                print(add_prefix(False, state) + "待ってるよ")
-                request = input(add_prefix(True, state))
-                if request.isspace() or request == "":
-                    event = terminal_robot_event(state)
-                    state = transition(state, event)
-                    face = add_prefix(False, state)
-                    print(face + "空白だね。もう一度聞いて。")
-                    event = RobotEvent.START_LISTENING
-                    continue
-                elif request in { "/q", "/quit", "/exit" }:
+                event, request = on_listening(state)
+                if request in { "/q", "/quit", "/exit" }:
                     print("\n終了します。")
                     break
-                event = terminal_robot_event(state)
-
             elif state == RobotState.THINKING:
-                print(add_prefix(False, state) + "考え中")
-                reply_text = reply(request)
-                event = terminal_robot_event(state)
-
+                event, reply_text = on_thinking(state, request)
             elif state == RobotState.SPEAKING:
-                face = add_prefix(False, state)
-                print(face + reply_text)
-                event = terminal_robot_event(state)
-
+                event = on_speaking(state, reply_text)
             elif state == RobotState.IDLE:
-                event = terminal_robot_event(state)
+                event = on_idle(state)
+            elif state == RobotState.EMPTY:
+                event= on_empty(state)
+            # ## 以下のif-elif-else構文は、現在のStateに応じて、次のEventを指定するスクリプト
+            # if state == RobotState.LISTENING:
+            #     print(add_prefix(False, state) + "待ってるよ")
+            #     request = input(add_prefix(True, state))
+            #     if request.isspace() or request == "":
+            #         event = on_empty(state)
+            #         state = transition(state, event)
+            #         face = add_prefix(False, state)
+            #         print(face + "空白だね。もう一度聞いて。")
+            #         event = RobotEvent.START_LISTENING
+            #         continue
+            #     if request in { "/q", "/quit", "/exit" }:
+            #         print("\n終了します。")
+            #         break
+            #     event = on_listening(state)
 
+            # elif state == RobotState.THINKING:
+            #     reply_text = reply(request)
+            #     event = on_thinking(state, request)
+
+            # elif state == RobotState.SPEAKING:
+            #     event = on_speaking(state, reply_text)
+
+            # elif state == RobotState.IDLE:
+            #     event = on_idle(state)
         except KeyboardInterrupt:
             print("\n終了します。")
             break
