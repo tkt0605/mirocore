@@ -43,7 +43,7 @@ def on_empty(state: RobotState, user_name: str) -> RobotEvent:
 def on_idle(state:RobotState) -> RobotEvent:
     return RobotEvent.START_LISTENING
 
-def inputer_user_name() -> str:
+def inputer_user_name() -> str | None:
     try:
         REQUEST_NAME: str = "あなたの名前は？"
         user_name = input(f"{REQUEST_NAME}: ")
@@ -55,3 +55,4 @@ def inputer_user_name() -> str:
 
     except KeyboardInterrupt:
         print("\n終了します。")
+        return None
