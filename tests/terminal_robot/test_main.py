@@ -4,6 +4,7 @@ from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.__main__ import main
 from mirocore.terminal_robot.expressive import add_prefix
 from unittest.mock import Mock
+from mirocore.terminal_robot.options import inputer_user_name
 import pytest
 
 user_name = ""
@@ -50,4 +51,67 @@ def test_ctrl_c_and_quit(monkeypatch, capsys) -> None:
     ### 出力を確認
     out = capsys.readouterr()
 
+    assert "終了します。" in out.out
+
+
+
+## 確認文 あなたの名前は、テストですね。 が出ること
+def test_username_is_exists(monkeypatch, capsys) -> None:
+    answers = iter(["テスト", "/q"])
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(answers)
+    )
+    user_name = inputer_user_name()
+    assert user_name is not None
+
+    out = capsys.readouterr()
+    assert f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n" in out.out
+    assert user_name == "テスト"
+
+## 空の名前で 名前が必要です。 と出て、再入力できること
+def test_username_is_empty(monkeypatch, capsys) -> None:
+    answers = iter(["", "テスト"])
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(answers)
+    )
+    
+    user_name = inputer_user_name()
+    assert user_name is not None
+
+    out = capsys.readouterr()
+    assert "名前が必要です。" in out.out
+
+    assert f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n" in out.out
+    assert user_name == "テスト"
+
+## 2回目以降の発言でも同じ名前が使われ、名前を聞き直さないこと
+def test_username_is_same(monkeypatch, capsys) -> None:
+    answers = iter(["test", "test"])
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(answers)
+    )
+    user_name = inputer_user_name()
+    assert user_name is not None
+
+    out = capsys.readouterr()
+    assert f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n" in out.out
+    assert user_name == "test"
+
+## 名前入力中の Ctrl+C で 待ってるよ が出ず、input() が1回で終わること
+
+def test_username_is_ctrl_c(monkeypatch, capsys) -> None:
+    def interrupted(_prompt: str) -> str:
+        raise KeyboardInterrupt
+    
+    monkeypatch.setattr(
+        "builtins.input",
+        interrupted
+    )
+    user_name = inputer_user_name()
+    assert user_name is None
+
+    out = capsys.readouterr()
     assert "終了します。" in out.out
