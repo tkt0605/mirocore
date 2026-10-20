@@ -111,17 +111,22 @@ def test_username_is_same(monkeypatch, capsys) -> None:
     assert "終了します。" in out.out
 
 ## 名前入力中の Ctrl+C で 待ってるよ が出ず、input() が1回で終わること
-
 def test_username_is_ctrl_c(monkeypatch, capsys) -> None:
+    called = 0
+
     def interrupted(_prompt: str) -> str:
+        nonlocal called
+        called += 1
         raise KeyboardInterrupt
     
     monkeypatch.setattr(
         "builtins.input",
         interrupted
     )
-    user_name = inputer_user_name()
-    assert user_name is None
-
+    main()
     out = capsys.readouterr()
+    
+    assert called == 1
+    assert "待ってるよ" not in out.out
+    assert "あなたの名前は、" not in out.out
     assert "終了します。" in out.out
