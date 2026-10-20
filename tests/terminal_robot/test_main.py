@@ -88,17 +88,27 @@ def test_username_is_empty(monkeypatch, capsys) -> None:
 
 ## 2回目以降の発言でも同じ名前が使われ、名前を聞き直さないこと
 def test_username_is_same(monkeypatch, capsys) -> None:
-    answers = iter(["test", "test"])
+    answers = iter(["test", "こんにちは", "おはよう", "/q"])
+    # ある場所の属性を別のものに置き換える。
     monkeypatch.setattr(
+        # python組み込み型のinput関数のモック
         "builtins.input",
+        # モック関数
         lambda _: next(answers)
     )
-    user_name = inputer_user_name()
-    assert user_name is not None
-
+    # user_name = inputer_user_name()
+    # assert user_name is not None
+    ## main()関数内にもinputer_user_nameがあるからわざわざもう一回inputer_user_nameを呼ぶ必要はない
+    main()
     out = capsys.readouterr()
-    assert f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n" in out.out
-    assert user_name == "test"
+    # assert out.out.count("あなたの名前は？") == 1
+    # assert out.out.count(f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n") == 1
+    # assert out.out.count(f"MIROC(•‿•) > {user_name}さん、待ってるよ") == 3
+    # assert out.out.count(f"MIROC(•_•) > {user_name}さん、考え中です。少々お待ち下さい。") == 2
+    assert out.out.count("あなたの名前は、testですね。\nよろしくお願いします。\n") == 1
+    assert out.out.count("MIROC(•‿•) > testさん、待ってるよ") == 3
+    assert out.out.count("MIROC(•_•) > testさん、考え中です。少々お待ち下さい。") == 2
+    assert "終了します。" in out.out
 
 ## 名前入力中の Ctrl+C で 待ってるよ が出ず、input() が1回で終わること
 
