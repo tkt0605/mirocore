@@ -26,3 +26,7 @@ def test_add_prefix_miroc_speaking() -> None:
 def test_add_prefix_miroc_error() -> None:
     state = RobotState.ERROR
     assert add_prefix(False, state) == "MIROC(×_×) > "
+
+def test_add_prefix_miroc_empty() -> None:
+    state = RobotState.EMPTY
+    assert add_prefix(False, state) == "MIROC(・o・) > "

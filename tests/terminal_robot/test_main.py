@@ -10,17 +10,22 @@ import pytest
 user_name = ""
 # テスト用の一言テスト
 
-## 初期条件から、名前を入力して永続化したかどうか
-## transition関数のテスト
-def test_transition_function() -> None:
-    state = RobotState.IDLE
-    event = RobotEvent.START_LISTENING
-
-    state = transition(state, event)
-    assert state == RobotState.LISTENING
-    excepted_event = RobotEvent.CONFIRM_INPUT
-    state = transition(state, excepted_event)
-    assert state == RobotState.THINKING
+## 状態遷移の関係をまとめた表をパラメータ化
+@pytest.mark.parametrize(
+    ("state", "event", "expected_state"),
+    [
+        (RobotState.IDLE, RobotEvent.START_LISTENING, RobotState.LISTENING),
+        (RobotState.LISTENING, RobotEvent.CONFIRM_INPUT, RobotState.THINKING),
+        (RobotState.THINKING, RobotEvent.REPLY_READY, RobotState.SPEAKING),
+        (RobotState.SPEAKING, RobotEvent.OUTPUT_DONE, RobotState.IDLE),
+        (RobotState.ERROR, RobotEvent.ERROR_SHOWN, RobotState.IDLE),
+        (RobotState.LISTENING, RobotEvent.EMPTY_INPUT, RobotState.EMPTY),
+        (RobotState.EMPTY, RobotEvent.START_LISTENING, RobotState.LISTENING),
+    ],
+)
+## transition関数の
+def test_transition_function(state: RobotState, event: RobotEvent, expected_state: RobotState) -> None:
+    assert transition(state, event) == expected_state
 
 ## 空文字 "" も終了し、「こんにちは、名前さん」は出ず、IDLE状態に戻るかどうか
 def test_empty_name_and_quit(monkeypatch, capsys) -> None:
