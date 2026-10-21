@@ -34,7 +34,8 @@ uv run python -m mirocore.terminal_robot
 | `LISTENING` | ユーザー入力を待っている状態 |
 | `THINKING` | 入力が確定し、応答を準備している状態 |
 | `SPEAKING` | 準備した応答を出力する状態 |
-| `ERROR` | 空入力や不正な遷移などの異常を表示する状態 |
+| `ERROR` | 不正な遷移などの異常を表示する状態 |
+| `EMPTY` | 名前・質問入力時の空入力された状態 |
 
 状態は「テキストが存在するか」ではなく、Terminal Robotが現在どの処理段階にいるかを表します。
 
