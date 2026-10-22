@@ -1,7 +1,11 @@
 import sys
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.expressive import add_prefix
-from mirocore.terminal_robot.reply import reply
+from mirocore.terminal_robot.reply import (
+ reply,
+ reply_remember,
+ reply_phrase,
+)
 
 def terminal_robot_state(state: RobotState, event: RobotEvent) -> RobotState:
     ## ここは、状態遷移用の関数を読み出すためのスクリプト
@@ -26,8 +30,10 @@ def on_listening(state: RobotState, user_name: str) -> tuple[RobotEvent,str]:
 
 def on_thinking(state: RobotState, request: str, user_name: str) -> tuple[RobotEvent,str]:
     face = add_prefix(False, state)
+    remember = reply_remember(None)
+    text = reply(request, user_name, remember)
     print(face + f"{user_name}さん、考え中です。少々お待ち下さい。")
-    return RobotEvent.REPLY_READY, reply(request, user_name)
+    return RobotEvent.REPLY_READY, text
 
 
 def on_speaking(state: RobotState, reply_text: str) -> RobotEvent:

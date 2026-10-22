@@ -15,6 +15,7 @@ def main() -> None:
     state = RobotState.IDLE
     event = RobotEvent.START_LISTENING
     user_name = inputer_user_name()
+
     if user_name is None:
         return
     while True:
