@@ -1,6 +1,3 @@
-from cmath import phase
-from tkinter import NO
-from unittest import result
 from mirocore.terminal_robot.reply import (
     reply,
     normalize,
@@ -47,13 +44,13 @@ user_name = ""
 def test_reply_function() -> None:
     user_name = "テスト"
     for request, response in zip(request_lists, response_lists):
-        assert reply(request, user_name, None) == response
+        assert reply(request, user_name, None) == f"{response}"
         ## ここで、記憶を追加して、再びテストを実行
         memory = "僕は、男です。"
-        assert reply(request, user_name, memory) == f"{memory}{response}"
+        assert reply(request, user_name, memory) == f"{memory} {response}"
         ## ここで、memoryを空文字にして、再びテストを実行
         memory = ""
-        assert reply(request, user_name, memory) == f"{memory}{response}"
+        assert reply(request, user_name, memory) == f"{response}"
 
 def test_normalize_function() -> None:
     for request, normalized in zip(request_normalized_lists, request_lists):
