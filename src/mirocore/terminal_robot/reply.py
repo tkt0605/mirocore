@@ -39,11 +39,17 @@ def reply_remember(memory: str | None) -> str | None:
 ## 入力：発言内容
 ## 出力：一番左の語句、またはNone
 def reply_phrase(request: str) -> str | None:
+    # ここで正規化
     normalized_req = normalize(request)
+    # ここで、キーワード検索を実行
     for key in _REPLY_KEYWORDS_INDEX:
+        # ここで、キーワードの位置を検索
         position = normalized_req.find(key)
+        # ここで、キーワードが見つかった場合は、そのキーワードを返す
         if position != -1:
+            # ここで、キーワードの位置からキーワードの長さを取得して、キーワードを返す
             return normalized_req[position:position + len(key)]
+    # ここで、キーワードが見つからなかった場合は、Noneを返す
     return None
 
 ## 応答生成用の関数
@@ -60,4 +66,4 @@ def reply(request: str, user_name: str, memory: str | None) -> str | None:
         return body
     else:
         # ここで、新規記憶(remember)を辞書に追加する。
-        return f"{remember} {body}"
+        return f"{remember}{body}"
