@@ -7,3 +7,5 @@ __pycache__
 .env
 .env.local
 .logs/
+memory_index/**/*.json
+memory_index/**/*.local.json
