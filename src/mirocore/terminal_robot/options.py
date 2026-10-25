@@ -49,6 +49,13 @@ def on_empty(state: RobotState, user_name: str) -> RobotEvent:
 def on_idle(state:RobotState) -> RobotEvent:
     return RobotEvent.START_LISTENING
 
+# <ユーザー名>_memories.jsonというファイルを作成
+# 以上のファイルがない時は、この関数を読み出して、ファイルを作らせる。
+# ファイルがある時は、そのファイルを読み出して、ユーザー名を返す。
+# このファイルは、ユーザー名と、そのユーザーに関する記憶のリストを持っている。
+# localでは、nameのみでいい。しかし、globalでは、nameとUUIDを組み合わせて、ユーザーを特定する。
+# <ユーザー名>/<ユーザー名>_memories.local.jsonと<ユーザー名>/<ユーザー名>_memories.jsonの二つ作成。
+# localの方は、編集可能。しかし、globalの方は、編集不可。
 def inputer_user_name() -> str | None:
     try:
         REQUEST_NAME: str = "あなたの名前は？"

@@ -1,4 +1,8 @@
 """応答生成用のモジュール"""
+from operator import itemgetter
+from numpy import append
+
+
 _REPLY_KEYWORDS_INDEX: dict[str, str] = {
     "こんにちは": "こんにちは!",
     "おはよう": "おはようございます!",
@@ -35,10 +39,45 @@ def reply_remember(memory: str | None) -> str | None:
         return None
     return memory
 
+## 発言から記憶するk候補を引き出す関数
+# 返信を作る前に、今の発言だけを見る純粋な関数を置きます
+# 返すのは、覚えておく文か None です。ファイルも辞書も触りません
+# 最初の規則は狭くてよく、たとえば「僕は、男です。」のように、ユーザーが自分について述べた文だけを候補
+def propose_memory(request: str) -> str | None:
+    ## 最初の規則は狭くてよく、たとえば「僕は、男です。」のように、ユーザーが自分について述べた文だけを候補
+    target_words = ["僕", "私", "俺", "自分", "自分自身", "私自身"]
+    for word in target_words:
+        if word in request:
+            return request
+    return None
+
+## 記憶の追加・更新
+# 候補があるときだけ、ループが持っているリストを更新
+# 空や、すでに同じ文があるときはリストを変更しない。
+# 戻り値は、更新されたリストを返す。
+def add_memory(memories: list[str], item: str) -> list[str]:
+    if item is None or item == "":
+        return memories
+    
+    if item in memories:
+        return memories
+    ## itemをリストに追加
+    memories.append(item)
+    ## リストを返す
+    return memories
+
+## 記憶の選定
+# リストと今の発言から、返信に乗せる1件か None を返します。
+# 最初は「直前に追加した1件」で十分
+#件数が増えてから、発言と重なる文を選ぶ規則を足す
+def select_memory(memories: list[str], request: str) -> str | None:
+    if len(memories) == 0:
+        return None
+    return memories[-1]
+
 ## 現発言のキーワード取得用の関数
 ## 入力：発言内容
 ## 出力：一番左の語句、またはNone
-
 # 正規化された文書の全てみてから、キーワードを返す関数
 def reply_phrase(request: str) -> str | None:
     normalized_req = normalize(request)

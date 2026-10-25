@@ -10,7 +10,7 @@ from mirocore.terminal_robot.options import (
 )
 def main() -> None:
     # emoji = add_prefix(False,RobotState.IDLE)
-    print("== ターミナル・RoBotを起動しました!! ==")
+    print("== hello world ==")
     ## 初期条件の設定
     state = RobotState.IDLE
     event = RobotEvent.START_LISTENING
@@ -18,6 +18,7 @@ def main() -> None:
 
     if user_name is None:
         return
+
     while True:
         try:
             state = terminal_robot_state(state, event)
