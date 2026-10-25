@@ -66,4 +66,4 @@ def reply(request: str, user_name: str, memory: str | None) -> str | None:
         return body
     else:
         # ここで、新規記憶(remember)を辞書に追加する。
-        return f"{remember}{body}"
+        return f"{remember} {body}"
