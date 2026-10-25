@@ -30,8 +30,8 @@ def on_listening(state: RobotState, user_name: str) -> tuple[RobotEvent,str]:
 
 def on_thinking(state: RobotState, request: str, user_name: str) -> tuple[RobotEvent,str]:
     face = add_prefix(False, state)
-    # remember = reply_remember(None)
-    remember = reply_remember("僕は、男です。")
+    remember = reply_remember(None)
+    # remember = reply_remember("僕は、男です。")
     text = reply(request, user_name, remember)
     print(face + f"{user_name}さん、考え中です。少々お待ち下さい。")
     return RobotEvent.REPLY_READY, text
