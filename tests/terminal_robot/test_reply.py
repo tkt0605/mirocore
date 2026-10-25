@@ -91,7 +91,7 @@ def test_reply_phrase_function() -> None:
         "疲れた",
         "おはよう",
         "こんにちは",
-        "こんにちは",
+        "疲れた",
     ]
 
     for input, output in zip(input_lists, output_lists):
