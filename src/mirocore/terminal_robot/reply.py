@@ -41,12 +41,6 @@ def reply_remember(memory: str | None) -> str | None:
 
 # 正規化された文書の全てみてから、キーワードを返す関数
 def reply_phrase(request: str) -> str | None:
-    # normalized_req = normalize(request)
-    # for key in _REPLY_KEYWORDS_INDEX:
-    #     position = normalized_req.find(key)
-    #     if position:
-    #         return normalized_req[position:position + len(key)]
-    # return None
     normalized_req = normalize(request)
     best_key: str | None = None
     best_position_key: int | None = None
