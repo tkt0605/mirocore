@@ -22,7 +22,6 @@ def write_user_local_json(user_name: str, data: dict[str, list[str]]) -> None:
 def read_user_local_json(user_name: str) -> dict[str, list[str]] | None:
     try:
         with open(local_memory_path(user_name), "r") as f:
-            data = json.load(f)
-            return data
+            json.load(f)
     except FileNotFoundError:
         return None
