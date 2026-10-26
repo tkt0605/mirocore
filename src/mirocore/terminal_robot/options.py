@@ -50,6 +50,7 @@ def on_thinking(state: RobotState, request: str, user_name: str, memory_lists: l
     if remembered_memory is not None:
         memory_lists = add_memory(memory_lists, remembered_memory)
     selected_memory = select_memory(memory_lists, request)
+    write_user_local_json(user_name, {"memory_lists": memory_lists})
     text = reply(request, user_name, selected_memory)
     print(face + f"{user_name}さん、考え中です。少々お待ち下さい。")
     return RobotEvent.REPLY_READY, text
