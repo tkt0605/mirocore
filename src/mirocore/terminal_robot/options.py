@@ -98,16 +98,8 @@ def inputer_user_name() -> str | None:
         else:
             data = read_user_local_json(user_name)
             if data is None:
-                print("名前が見つかりませんでした。")
                 return None
-            return data["name"]
-        #     with open(f"memory_index/{user_name}/{user_name}_memories.local.json", "w") as f:
-        #         json.dump(data, f, ensure_ascii=False, indent=4)
-        #     return user_name
-        # else:
-        #     with open(f"memory_index/{user_name}/{user_name}_memories.local.json", "r") as f:
-        #         data = json.load(f)
-        #         user_name = data["name"]
+            return 
     except KeyboardInterrupt:
         print("\n終了します。")
         return None 
