@@ -1,3 +1,4 @@
+from tkinter import NO
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.expressive import add_prefix
 from mirocore.terminal_robot.reply import (
@@ -40,17 +41,16 @@ def on_listening(state: RobotState, user_name: str) -> tuple[RobotEvent,str]:
 
 def on_thinking(state: RobotState, request: str, user_name: str, memory_lists: list[str]) -> tuple[RobotEvent,str]:
     face = add_prefix(False, state)
-    # proposed_memory = propose_memory(request)
-    # remember = reply_remember(proposed_memory)
-    # memories = add_memory(state.memories, proposed_memory)
-    # selected_memory = select_memory(memories, request)
-    # text = reply(request, user_name, selected_memory)
     proposed_memory = propose_memory(request)
     remembered_memory = reply_remember(proposed_memory)
     if remembered_memory is not None:
         memory_lists = add_memory(memory_lists, remembered_memory)
     selected_memory = select_memory(memory_lists, request)
-    write_user_local_json(user_name, {"memory_lists": memory_lists})
+    json_data = {
+        "name": user_name,
+        "memory_lists": memory_lists
+    }
+    write_user_local_json(user_name, json_data)
     text = reply(request, user_name, selected_memory)
     print(face + f"{user_name}さん、考え中です。少々お待ち下さい。")
     return RobotEvent.REPLY_READY, text
@@ -92,14 +92,17 @@ def inputer_user_name() -> str | None:
         if not user_local_file_exists(user_name):
             print(f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n")
             create_json_folder(user_name)
-            data: dict[str, str] = {"name": user_name}
+            data: dict[str, list[str]] = {
+                "name": user_name,
+                "memory_lists": [],
+            }
             write_user_local_json(user_name, data)
             return user_name
         else:
             data = read_user_local_json(user_name)
             if data is None:
                 return None
-            return 
+            return data["name"]
     except KeyboardInterrupt:
         print("\n終了します。")
         return None 
