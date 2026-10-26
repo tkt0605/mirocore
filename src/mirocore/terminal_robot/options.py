@@ -10,6 +10,9 @@ from mirocore.terminal_robot.reply import (
 )
 from mirocore.terminal_robot.write_read import (
     user_local_file_exists,
+    write_user_local_json,
+    read_user_local_json,
+    local_memory_path,
 )
 import json
 import os
@@ -90,15 +93,21 @@ def inputer_user_name() -> str | None:
             print(f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n")
             create_json_folder(user_name)
             data: dict[str, str] = {"name": user_name}
-            with open(f"memory_index/{user_name}/{user_name}_memories.local.json", "w") as f:
-                json.dump(data, f, ensure_ascii=False, indent=4)
+            write_user_local_json(user_name, data)
             return user_name
         else:
-            with open(f"memory_index/{user_name}/{user_name}_memories.local.json", "r") as f:
-                data = json.load(f)
-                user_name = data["name"]
-                return user_name
-
+            data = read_user_local_json(user_name)
+            if data is None:
+                print("名前が見つかりませんでした。")
+                return None
+            return data["name"]
+        #     with open(f"memory_index/{user_name}/{user_name}_memories.local.json", "w") as f:
+        #         json.dump(data, f, ensure_ascii=False, indent=4)
+        #     return user_name
+        # else:
+        #     with open(f"memory_index/{user_name}/{user_name}_memories.local.json", "r") as f:
+        #         data = json.load(f)
+        #         user_name = data["name"]
     except KeyboardInterrupt:
         print("\n終了します。")
         return None 
