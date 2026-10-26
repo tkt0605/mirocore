@@ -1,12 +1,20 @@
-import sys
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.expressive import add_prefix
 from mirocore.terminal_robot.reply import (
  reply,
  reply_remember,
  reply_phrase,
+ select_memory,
+ propose_memory,
+ add_memory
 )
+from mirocore.terminal_robot.write_read import (
+    user_local_file_exists,
+)
+import json
+import os
 
+memory_lists: list[str] = []
 def terminal_robot_state(state: RobotState, event: RobotEvent) -> RobotState:
     ## ここは、状態遷移用の関数を読み出すためのスクリプト
     try:
@@ -30,8 +38,17 @@ def on_listening(state: RobotState, user_name: str) -> tuple[RobotEvent,str]:
 
 def on_thinking(state: RobotState, request: str, user_name: str) -> tuple[RobotEvent,str]:
     face = add_prefix(False, state)
-    remember = reply_remember(None)
-    text = reply(request, user_name, remember)
+    # proposed_memory = propose_memory(request)
+    # remember = reply_remember(proposed_memory)
+    # memories = add_memory(state.memories, proposed_memory)
+    # selected_memory = select_memory(memories, request)
+    # text = reply(request, user_name, selected_memory)
+    proposed_memory = propose_memory(request)
+    remembered_memory = reply_remember(proposed_memory)
+    if remembered_memory is not None:
+        memory_lists = add_memory(memory_lists, remembered_memory)
+    selected_memory = select_memory(memory_lists, request)
+    text = reply(request, user_name, selected_memory)
     print(face + f"{user_name}さん、考え中です。少々お待ち下さい。")
     return RobotEvent.REPLY_READY, text
 
@@ -49,6 +66,11 @@ def on_empty(state: RobotState, user_name: str) -> RobotEvent:
 def on_idle(state:RobotState) -> RobotEvent:
     return RobotEvent.START_LISTENING
 
+## json用のフォルダ作成用のかんす
+def create_json_folder(user_name: str) -> None:
+    os.makedirs(f"memory_index/{user_name}", exist_ok=True)
+    print(f"memory_index/{user_name}フォルダを作成しました: {user_name}")
+
 # <ユーザー名>_memories.jsonというファイルを作成
 # 以上のファイルがない時は、この関数を読み出して、ファイルを作らせる。
 # ファイルがある時は、そのファイルを読み出して、ユーザー名を返す。
@@ -63,9 +85,20 @@ def inputer_user_name() -> str | None:
         if user_name.strip() == "":
             print("名前が必要です。")
             return inputer_user_name()
-        print(f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n")
-        return user_name
+        ## ユーザー名の有無を判断。
+        if not user_local_file_exists(user_name):
+            print(f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n")
+            create_json_folder(user_name)
+            data: dict[str, str] = {"name": user_name}
+            with open(f"memory_index/{user_name}/{user_name}_memories.local.json", "w") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+            return user_name
+        else:
+            with open(f"memory_index/{user_name}/{user_name}_memories.local.json", "r") as f:
+                data = json.load(f)
+                user_name = data["name"]
+                return user_name
 
     except KeyboardInterrupt:
         print("\n終了します。")
-        return None
+        return None 
