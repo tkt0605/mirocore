@@ -17,7 +17,6 @@ from mirocore.terminal_robot.write_read import (
 import json
 import os
 
-memory_lists: list[str] = []
 def terminal_robot_state(state: RobotState, event: RobotEvent) -> RobotState:
     ## ここは、状態遷移用の関数を読み出すためのスクリプト
     try:
@@ -39,7 +38,7 @@ def on_listening(state: RobotState, user_name: str) -> tuple[RobotEvent,str]:
         return RobotEvent.EMPTY_INPUT, ""
     return RobotEvent.CONFIRM_INPUT, request
 
-def on_thinking(state: RobotState, request: str, user_name: str) -> tuple[RobotEvent,str]:
+def on_thinking(state: RobotState, request: str, user_name: str, memory_lists: list[str]) -> tuple[RobotEvent,str]:
     face = add_prefix(False, state)
     # proposed_memory = propose_memory(request)
     # remember = reply_remember(proposed_memory)
