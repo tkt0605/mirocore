@@ -8,6 +8,11 @@ from mirocore.terminal_robot.options import (
     on_empty,
     on_idle,
 )
+from mirocore.terminal_robot.write_read import (
+    read_user_local_json,
+    write_user_local_json,
+)
+
 def main() -> None:
     # emoji = add_prefix(False,RobotState.IDLE)
     ## 初期条件の設定
@@ -15,10 +20,17 @@ def main() -> None:
     event = RobotEvent.START_LISTENING
     user_name = inputer_user_name()
     print(" hello world ")
-
     if user_name is None:
         return
+    loaded_data = read_user_local_json(user_name)
     memories: list[str] = []
+    if loaded_data is not None and isinstance(loaded_data.get("memories"), list):
+        memories = [
+            item for item in loaded_data["memories"] if isinstance(item, str)
+        ]
+    else:
+        memories = []
+
     while True:
         try:
             state = terminal_robot_state(state, event)
