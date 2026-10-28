@@ -46,9 +46,9 @@ def on_thinking(state: RobotState, request: str, user_name: str, memory_lists: l
     if remembered_memory is not None:
         memory_lists = add_memory(memory_lists, remembered_memory)
     selected_memory = select_memory(memory_lists, request)
-    json_data = {
+    json_data: dict[str, list[str]] = {
         "name": user_name,
-        "memory_lists": memory_lists
+        "memory_lists": memory_lists,
     }
     write_user_local_json(user_name, json_data)
     text = reply(request, user_name, selected_memory)
@@ -101,6 +101,8 @@ def inputer_user_name() -> str | None:
         else:
             data = read_user_local_json(user_name)
             if data is None:
+                return None
+            if not "name" in data:
                 return None
             return data["name"]
     except KeyboardInterrupt:
