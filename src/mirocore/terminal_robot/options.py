@@ -39,7 +39,12 @@ def on_listening(state: RobotState, user_name: str) -> tuple[RobotEvent,str]:
         return RobotEvent.EMPTY_INPUT, ""
     return RobotEvent.CONFIRM_INPUT, request
 
-def on_thinking(state: RobotState, request: str, user_name: str, memories: list[str]) -> tuple[RobotEvent,str]:
+def on_thinking(
+    state: RobotState,
+    request: str,
+    user_name: str,
+    memories: list[str]
+) -> tuple[RobotEvent, str, list[str]]:
     face = add_prefix(False, state)
     proposed_memory = propose_memory(request)
     remembered_memory = reply_remember(proposed_memory)
@@ -53,7 +58,7 @@ def on_thinking(state: RobotState, request: str, user_name: str, memories: list[
     write_user_local_json(user_name, json_data)
     text = reply(request, user_name, selected_memory)
     print(face + f"{user_name}さん、考え中です。少々お待ち下さい。")
-    return RobotEvent.REPLY_READY, text
+    return RobotEvent.REPLY_READY, text, memories
 
 
 def on_speaking(state: RobotState, reply_text: str) -> RobotEvent:

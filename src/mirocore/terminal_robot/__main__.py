@@ -10,11 +10,11 @@ from mirocore.terminal_robot.options import (
 )
 def main() -> None:
     # emoji = add_prefix(False,RobotState.IDLE)
-    print("== hello world ==")
     ## 初期条件の設定
     state = RobotState.IDLE
     event = RobotEvent.START_LISTENING
     user_name = inputer_user_name()
+    print(" hello world ")
 
     if user_name is None:
         return
@@ -28,7 +28,7 @@ def main() -> None:
                     print("\n終了します。")
                     break
             elif state == RobotState.THINKING:
-                event, reply_text = on_thinking(state, request, user_name, memories)
+                event, reply_text, memories = on_thinking(state, request, user_name, memories)
             elif state == RobotState.SPEAKING:
                 event = on_speaking(state, reply_text)
             elif state == RobotState.IDLE:
