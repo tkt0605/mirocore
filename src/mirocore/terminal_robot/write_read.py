@@ -9,19 +9,43 @@ def user_local_file_exists(user_name: str) -> bool:
     return local_memory_path(user_name).exists()
 
 
-def write_user_local_json(user_name: str, data: dict[str, list[str]]) -> None:
+def write_user_local_json(
+    user_name: str,
+    data: dict[str, list[str]]
+) -> None:
+    # try:
+    #     with open(local_memory_path(user_name), "r") as f:
+    #         loaded_data = json.load(f)
+    # except FileNotFoundError:
+    #     return {"name": user_name}
+    # loaded_data.update(data)
+    # with open(local_memory_path(user_name), "w") as f:
+    #     json.dump(loaded_data, f, ensure_ascii=False, indent=4)
     try:
-        with open(local_memory_path(user_name), "r") as f:
-            data = json.load(f)
+        with open(local_memory_path(user_name), "r", encoding="utf-8") as f:
+            loaded_data = json.load(f)
     except FileNotFoundError:
-        data = {"name": user_name}
-    with open(local_memory_path(user_name), "w") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        loaded_data = {
+            "name": user_name
+        }
+    for key, new_memory in data.items():
+        if not new_memory:
+            continue
+        if key not in loaded_data:
+            loaded_data[key] = []
+        for memory in new_memory:
+            if memory not in loaded_data[key]:
+                loaded_data[key].append(memory)
+    
+    with open(local_memory_path(user_name), "w", encoding="utf-8") as f:
+        json.dump(loaded_data, f, ensure_ascii=False, indent=4)
+        
 
 
 def read_user_local_json(user_name: str) -> dict[str, list[str]] | None:
     try:
         with open(local_memory_path(user_name), "r") as f:
-            json.load(f)
+            data = json.load(f)
+        return data
     except FileNotFoundError:
         return None
