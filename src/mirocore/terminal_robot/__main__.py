@@ -18,7 +18,7 @@ def main() -> None:
 
     if user_name is None:
         return
-    memory_lists: list[str] = []
+    memories: list[str] = []
     while True:
         try:
             state = terminal_robot_state(state, event)
@@ -28,7 +28,7 @@ def main() -> None:
                     print("\n終了します。")
                     break
             elif state == RobotState.THINKING:
-                event, reply_text = on_thinking(state, request, user_name, memory_lists)
+                event, reply_text = on_thinking(state, request, user_name, memories)
             elif state == RobotState.SPEAKING:
                 event = on_speaking(state, reply_text)
             elif state == RobotState.IDLE:

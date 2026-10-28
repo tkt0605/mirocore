@@ -39,16 +39,16 @@ def on_listening(state: RobotState, user_name: str) -> tuple[RobotEvent,str]:
         return RobotEvent.EMPTY_INPUT, ""
     return RobotEvent.CONFIRM_INPUT, request
 
-def on_thinking(state: RobotState, request: str, user_name: str, memory_lists: list[str]) -> tuple[RobotEvent,str]:
+def on_thinking(state: RobotState, request: str, user_name: str, memories: list[str]) -> tuple[RobotEvent,str]:
     face = add_prefix(False, state)
     proposed_memory = propose_memory(request)
     remembered_memory = reply_remember(proposed_memory)
     if remembered_memory is not None:
-        memory_lists = add_memory(memory_lists, remembered_memory)
-    selected_memory = select_memory(memory_lists, request)
-    json_data: dict[str, list[str]] = {
+        memories = add_memory(memories, remembered_memory)
+    selected_memory = select_memory(memories, request)
+    json_data: dict[str, str |list[str]] = {
         "name": user_name,
-        "memory_lists": memory_lists,
+        "memories": memories,
     }
     write_user_local_json(user_name, json_data)
     text = reply(request, user_name, selected_memory)
@@ -94,7 +94,7 @@ def inputer_user_name() -> str | None:
             create_json_folder(user_name)
             data: dict[str, list[str]] = {
                 "name": user_name,
-                "memory_lists": [],
+                "memories": [],
             }
             write_user_local_json(user_name, data)
             return user_name
