@@ -122,14 +122,8 @@ def test_add_memory_function() -> None:
     copy_list.append(item)
     assert result == copy_list
 
-# def test_select_memory_function() -> None:
-#     memories = [
-#         "僕は、男です。",
-#     ]
-#     request = "私は、女です。"
-#     current_memory = select_memory(memories, request)
-#     assert current_memory is None
-
-
-# def test_reply_to_self_introduction_function(is_new: bool) -> str:
-#     pass
+def test_reply_to_self_introduction_function() -> str:
+    is_new = True
+    assert reply_to_self_introduction(is_new) == "覚えておくね。"
+    is_new = False
+    assert reply_to_self_introduction(is_new) == "それは前に聞いたよ。"
