@@ -102,7 +102,6 @@ def reply_to_greeting(request: str, user_name: str, memory: str | None) -> str |
     remember = reply_remember(memory)
 
     if phrase is None or phrase == "":
-        print(f"phrase is None or phrase == : {phrase}")
         return f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
     body = _REPLY_KEYWORDS_INDEX.get(phrase)
     if remember is None:
