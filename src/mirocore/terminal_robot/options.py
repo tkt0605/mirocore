@@ -5,7 +5,7 @@ from mirocore.terminal_robot.reply import (
  reply_to_greeting,
  reply_remember,
  reply_phrase,
- select_memory,
+#  select_memory,
  propose_memory,
  add_memory,
  reply_to_self_introduction
@@ -57,8 +57,8 @@ def on_thinking(
         text = reply_to_self_introduction(added_memory > 0)
         # return RobotEvent.REPLY_READY, text, memories
     else:
-        selected_memory = select_memory(memories, request)
-        text = reply_to_greeting(request, user_name, selected_memory)
+        # selected_memory = select_memory(memories, request)
+        text = reply_to_greeting(request, user_name)
         
     json_data: dict[str, str |list[str]] = {
         "name": user_name,

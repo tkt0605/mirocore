@@ -66,10 +66,10 @@ def add_memory(memories: list[str], item: str) -> list[str]:
 # リストと今の発言から、返信に乗せる1件か None を返します。
 # 最初は「直前に追加した1件」で十分
 #件数が増えてから、発言と重なる文を選ぶ規則を足す
-def select_memory(memories: list[str], request: str) -> str | None:
-    if len(memories) == 0:
-        return None
-    return memories[-1]
+# def select_memory(memories: list[str], request: str) -> str | None:
+#     if len(memories) == 0:
+#         return None
+#     return memories[-1]
 
 ## 現発言のキーワード取得用の関数
 ## 入力：発言内容
@@ -97,17 +97,13 @@ def reply_phrase(request: str) -> str | None:
 ## 応答生成用の関数
 ## 入力：発言内容、ユーザー名、記憶内容
 ## 出力：応答内容
-def reply_to_greeting(request: str, user_name: str, memory: str | None) -> str | None:
+def reply_to_greeting(request: str, user_name: str) -> str | None:
     phrase = reply_phrase(request)
-    remember = reply_remember(memory)
 
     if phrase is None or phrase == "":
         return f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
     body = _REPLY_KEYWORDS_INDEX.get(phrase)
-    if remember is None:
-        return body
-    else:
-        return f"{remember} {body}"
+    return f"{body}"
 ## 自己紹介、新規記憶追加用の関数
 # input: 新規記憶かどうか
 # output: 応答内容

@@ -6,7 +6,7 @@ from mirocore.terminal_robot.reply import (
     _REPLY_KEYWORDS_INDEX,
     propose_memory,
     add_memory,
-    select_memory,
+    # select_memory,
     reply_to_self_introduction,
 )
 import pytest
@@ -48,13 +48,7 @@ user_name = ""
 def test_reply_function() -> None:
     user_name = "テスト"
     for request, response in zip(request_lists, response_lists):
-        assert reply_to_greeting(request, user_name, None) == f"{response}"
-        ## ここで、記憶を追加して、再びテストを実行
-        memory = "僕は、男です。"
-        assert reply_to_greeting(request, user_name, memory) == f"{memory} {response}"
-        ## ここで、memoryを空文字にして、再びテストを実行
-        memory = ""
-        assert reply_to_greeting(request, user_name, memory) == f"{response}"
+        assert reply_to_greeting(request, user_name) == f"{response}"
 
 def test_normalize_function() -> None:
     for request, normalized in zip(request_normalized_lists, request_lists):
@@ -63,16 +57,7 @@ def test_normalize_function() -> None:
 def test_reply_function_with_fallback() -> None:
     user_name = "テスト"
     for unmatched in unmatched_lists:
-        assert reply_to_greeting(unmatched, user_name, None) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
-        ## ここで、記憶を追加して、再びテストを実行
-        memory = "僕は、男です。"
-        assert reply_to_greeting(unmatched, user_name, memory) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
-        ## ここで、memoryを空文字にして、再びテストを実行
-        memory = ""
-        assert reply_to_greeting(unmatched, user_name, memory) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
-        ## ここで、memoryを英語にして、再びテストを実行
-        memory = "I am a boy."
-        assert reply_to_greeting(unmatched, user_name, memory) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
+        assert reply_to_greeting(unmatched, user_name) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
 
 def test_reply_remember_function() -> None:
     assert reply_remember(None) is None
@@ -137,8 +122,14 @@ def test_add_memory_function() -> None:
     copy_list.append(item)
     assert result == copy_list
 
-# def test_select_memory_function(memories: list[str], request: str) -> str | None:
-#     pass
+# def test_select_memory_function() -> None:
+#     memories = [
+#         "僕は、男です。",
+#     ]
+#     request = "私は、女です。"
+#     current_memory = select_memory(memories, request)
+#     assert current_memory is None
+
 
 # def test_reply_to_self_introduction_function(is_new: bool) -> str:
 #     pass
