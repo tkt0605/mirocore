@@ -1,8 +1,4 @@
 """応答生成用のモジュール"""
-from operator import itemgetter
-from numpy import append
-
-
 _REPLY_KEYWORDS_INDEX: dict[str, str] = {
     "こんにちは": "こんにちは!",
     "おはよう": "おはようございます!",
@@ -101,14 +97,22 @@ def reply_phrase(request: str) -> str | None:
 ## 応答生成用の関数
 ## 入力：発言内容、ユーザー名、記憶内容
 ## 出力：応答内容
-def reply(request: str, user_name: str, memory: str | None) -> str | None:
+def reply_to_greeting(request: str, user_name: str, memory: str | None) -> str | None:
     phrase = reply_phrase(request)
     remember = reply_remember(memory)
 
     if phrase is None or phrase == "":
+        print(f"phrase is None or phrase == : {phrase}")
         return f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
     body = _REPLY_KEYWORDS_INDEX.get(phrase)
     if remember is None:
         return body
     else:
         return f"{remember} {body}"
+## 自己紹介、新規記憶追加用の関数
+# input: 新規記憶かどうか
+# output: 応答内容
+def reply_to_self_introduction(is_new: bool) -> str | None:
+    if is_new:
+        return "覚えておくね。"
+    return "それは前に聞いたよ。"
