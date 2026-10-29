@@ -5,6 +5,7 @@ from mirocore.terminal_robot.__main__ import main
 from mirocore.terminal_robot.expressive import add_prefix
 from unittest.mock import Mock
 from mirocore.terminal_robot.options import inputer_user_name
+from pathlib import Path
 import pytest
 
 user_name = ""
@@ -23,6 +24,13 @@ user_name = ""
         (RobotState.EMPTY, RobotEvent.START_LISTENING, RobotState.LISTENING),
     ],
 )
+
+def tmp_path_example(tmp_path) -> None:
+    file_path = tmp_path / "example.txt"
+    file_path.write_text("Hello World To Test Code !", encoding="utf-8")
+    assert file_path.read_text(encoding="utf-8") == "Hello World To Test Code !"
+
+
 ## transition関数の
 def test_transition_function(state: RobotState, event: RobotEvent, expected_state: RobotState) -> None:
     assert transition(state, event) == expected_state
@@ -61,23 +69,25 @@ def test_ctrl_c_and_quit(monkeypatch, capsys) -> None:
 
 
 ## 確認文 名前 が出ること
-def test_username_is_exists(monkeypatch, capsys) -> None:
+def test_username_is_exists(monkeypatch, capsys, tmp_path) -> None:
     answers = iter(["テスト", "/q"])
     monkeypatch.setattr(
         "builtins.input",
         lambda _: next(answers)
     )
+    monkeypatch.chdir(tmp_path)
     user_name = inputer_user_name()
     assert user_name is not None
     assert user_name == "テスト"
 
 ## 空の名前で 名前が必要です。 と出て、再入力できること
-def test_username_is_empty(monkeypatch, capsys) -> None:
+def test_username_is_empty(monkeypatch, capsys, tmp_path) -> None:
     answers = iter(["", "テスト"])
     monkeypatch.setattr(
         "builtins.input",
         lambda _: next(answers)
     )
+    monkeypatch.chdir(tmp_path)
     
     user_name = inputer_user_name()
     assert user_name is not None
@@ -87,7 +97,7 @@ def test_username_is_empty(monkeypatch, capsys) -> None:
     assert user_name == "テスト"
 
 ## 2回目以降の発言でも同じ名前が使われ、名前を聞き直さないこと
-def test_username_is_same(monkeypatch, capsys) -> None:
+def test_username_is_same(monkeypatch, capsys, tmp_path) -> None:
     answers = iter(["test", "こんにちは", "おはよう", "/q"])
     # ある場所の属性を別のものに置き換える。
     monkeypatch.setattr(
@@ -96,6 +106,7 @@ def test_username_is_same(monkeypatch, capsys) -> None:
         # モック関数
         lambda _: next(answers)
     )
+    monkeypatch.chdir(tmp_path)
     # user_name = inputer_user_name()
     # assert user_name is not None
     ## main()関数内にもinputer_user_nameがあるからわざわざもう一回inputer_user_nameを呼ぶ必要はない
