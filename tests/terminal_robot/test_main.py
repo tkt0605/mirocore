@@ -24,16 +24,14 @@ user_name = ""
         (RobotState.EMPTY, RobotEvent.START_LISTENING, RobotState.LISTENING),
     ],
 )
+## transition関数の
+def test_transition_function(state: RobotState, event: RobotEvent, expected_state: RobotState) -> None:
+    assert transition(state, event) == expected_state
 
 def tmp_path_example(tmp_path) -> None:
     file_path = tmp_path / "example.txt"
     file_path.write_text("Hello World To Test Code !", encoding="utf-8")
     assert file_path.read_text(encoding="utf-8") == "Hello World To Test Code !"
-
-
-## transition関数の
-def test_transition_function(state: RobotState, event: RobotEvent, expected_state: RobotState) -> None:
-    assert transition(state, event) == expected_state
 
 ## 空文字 "" も終了し、「こんにちは、名前さん」は出ず、IDLE状態に戻るかどうか
 def test_empty_name_and_quit(monkeypatch, capsys) -> None:
