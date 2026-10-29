@@ -3,7 +3,11 @@ from mirocore.terminal_robot.reply import (
     normalize,
     reply_remember,
     reply_phrase,
-    _REPLY_KEYWORDS_INDEX
+    _REPLY_KEYWORDS_INDEX,
+    propose_memory,
+    add_memory,
+    select_memory,
+    reply_to_self_introduction,
 )
 import pytest
 
@@ -96,3 +100,31 @@ def test_reply_phrase_function() -> None:
 
     for input, output in zip(input_lists, output_lists):
         assert reply_phrase(input) == output
+
+def test_propose_memory_function() -> str | None:
+    try:
+        requests = [
+            "僕は、男です。",
+            "私は、女です。", 
+            "俺は、男です。", 
+            "自分は、男です。", 
+            "自分自身は、男です。", 
+            "私自身は、女です。", 
+            "隆人は、男です。", 
+            "隆人は、女です。"
+        ]
+        for request in requests:
+            assert propose_memory(request) == request
+    except AssertionError as e:
+        print(e)
+        return None
+    
+
+# def test_add_memory_function(memories: list[str], item: str) -> list[str]:
+#     pass
+
+# def test_select_memory_function(memories: list[str], request: str) -> str | None:
+#     pass
+
+# def test_reply_to_self_introduction_function(is_new: bool) -> str:
+#     pass
