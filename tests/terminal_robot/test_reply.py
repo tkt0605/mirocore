@@ -102,23 +102,22 @@ def test_reply_phrase_function() -> None:
         assert reply_phrase(input) == output
 
 def test_propose_memory_function() -> str | None:
-    try:
-        requests = [
-            "僕は、男です。",
-            "私は、女です。", 
-            "俺は、男です。", 
-            "自分は、男です。", 
-            "自分自身は、男です。", 
-            "私自身は、女です。", 
-            "隆人は、男です。", 
-            "隆人は、女です。"
-        ]
-        for request in requests:
-            assert propose_memory(request) == request
-    except AssertionError as e:
-        print(e)
-        return None
-    
+    requests = [
+        "僕は、男です。",
+        "私は、女です。", 
+        "俺は、男です。", 
+        "自分は、男です。", 
+        "自分自身は、男です。", 
+        "私自身は、女です。", 
+        "隆人は、男です。", 
+        "隆人は、女です。"
+    ]
+    for request in requests:
+        result = propose_memory(request)
+        if result:
+            assert result == request
+        else:
+            assert result is None
 
 # def test_add_memory_function(memories: list[str], item: str) -> list[str]:
 #     pass
