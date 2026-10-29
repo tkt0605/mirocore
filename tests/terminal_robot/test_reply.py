@@ -119,8 +119,23 @@ def test_propose_memory_function() -> str | None:
         else:
             assert result is None
 
-# def test_add_memory_function(memories: list[str], item: str) -> list[str]:
-#     pass
+def test_add_memory_function() -> None:
+    memories = [
+        "僕は、男です。",
+        "私は、女です。", 
+    ]
+    copy_list = memories.copy()
+    item = "俺は、男です。"
+
+    before = len(memories)
+    result = add_memory(memories, item)
+
+    assert result is memories
+    assert result[-1] == item
+    assert len(result) == before + 1
+
+    copy_list.append(item)
+    assert result == copy_list
 
 # def test_select_memory_function(memories: list[str], request: str) -> str | None:
 #     pass
