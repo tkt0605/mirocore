@@ -1,4 +1,3 @@
-from keyword import kwlist
 from pathlib import Path
 import json
 import os
@@ -42,9 +41,6 @@ def write_user_local_json(
                 ## 記憶がない時は、追加
                 if memory not in loaded_data[key]:
                     loaded_data[key].append(memory)
-                ## 記憶がある時は、何もしない
-                else:
-                    print( "この内容は、すでに記憶されています。")
         else:
             raise ValueError(f"Invalid key: {key}")
 
