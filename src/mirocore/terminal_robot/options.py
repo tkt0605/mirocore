@@ -7,7 +7,8 @@ from mirocore.terminal_robot.reply import (
  reply_phrase,
  select_memory,
  propose_memory,
- add_memory
+ add_memory,
+ reply_to_self_introduction
 )
 from mirocore.terminal_robot.write_read import (
     user_local_file_exists,
@@ -48,15 +49,22 @@ def on_thinking(
     face = add_prefix(False, state)
     proposed_memory = propose_memory(request)
     remembered_memory = reply_remember(proposed_memory)
+    before_memory = len(memories)
     if remembered_memory is not None:
         memories = add_memory(memories, remembered_memory)
-    selected_memory = select_memory(memories, request)
+        after_memory = len(memories)
+        added_memory = after_memory - before_memory
+        text = reply_to_self_introduction(added_memory > 0)
+        # return RobotEvent.REPLY_READY, text, memories
+    else:
+        selected_memory = select_memory(memories, request)
+        text = reply_to_greeting(request, user_name, selected_memory)
+        
     json_data: dict[str, str |list[str]] = {
         "name": user_name,
         "memories": memories,
     }
     write_user_local_json(user_name, json_data)
-    text = reply_to_greeting(request, user_name, selected_memory)
     print(face + f"{user_name}さん、考え中です。少々お待ち下さい。")
     return RobotEvent.REPLY_READY, text, memories
 
