@@ -69,14 +69,9 @@ def test_username_is_exists(monkeypatch, capsys) -> None:
     )
     user_name = inputer_user_name()
     assert user_name is not None
-
-    # out = capsys.readouterr()
-    # assert f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n" in out.out
-    # assert "hello world" in out.out
     assert user_name == "テスト"
 
 ## 空の名前で 名前が必要です。 と出て、再入力できること
-## OK
 def test_username_is_empty(monkeypatch, capsys) -> None:
     answers = iter(["", "テスト"])
     monkeypatch.setattr(
