@@ -1,5 +1,5 @@
 from mirocore.terminal_robot.reply import (
-    reply,
+    reply_to_greeting,
     normalize,
     reply_remember,
     reply_phrase,
@@ -44,13 +44,13 @@ user_name = ""
 def test_reply_function() -> None:
     user_name = "テスト"
     for request, response in zip(request_lists, response_lists):
-        assert reply(request, user_name, None) == f"{response}"
+        assert reply_to_greeting(request, user_name, None) == f"{response}"
         ## ここで、記憶を追加して、再びテストを実行
         memory = "僕は、男です。"
-        assert reply(request, user_name, memory) == f"{memory} {response}"
+        assert reply_to_greeting(request, user_name, memory) == f"{memory} {response}"
         ## ここで、memoryを空文字にして、再びテストを実行
         memory = ""
-        assert reply(request, user_name, memory) == f"{response}"
+        assert reply_to_greeting(request, user_name, memory) == f"{response}"
 
 def test_normalize_function() -> None:
     for request, normalized in zip(request_normalized_lists, request_lists):
@@ -59,16 +59,16 @@ def test_normalize_function() -> None:
 def test_reply_function_with_fallback() -> None:
     user_name = "テスト"
     for unmatched in unmatched_lists:
-        assert reply(unmatched, user_name, None) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
+        assert reply_to_greeting(unmatched, user_name, None) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
         ## ここで、記憶を追加して、再びテストを実行
         memory = "僕は、男です。"
-        assert reply(unmatched, user_name, memory) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
+        assert reply_to_greeting(unmatched, user_name, memory) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
         ## ここで、memoryを空文字にして、再びテストを実行
         memory = ""
-        assert reply(unmatched, user_name, memory) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
+        assert reply_to_greeting(unmatched, user_name, memory) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
         ## ここで、memoryを英語にして、再びテストを実行
         memory = "I am a boy."
-        assert reply(unmatched, user_name, memory) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
+        assert reply_to_greeting(unmatched, user_name, memory) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
 
 def test_reply_remember_function() -> None:
     assert reply_remember(None) is None

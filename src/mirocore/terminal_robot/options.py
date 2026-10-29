@@ -2,7 +2,7 @@ from tkinter import NO
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.expressive import add_prefix
 from mirocore.terminal_robot.reply import (
- reply,
+ reply_to_greeting,
  reply_remember,
  reply_phrase,
  select_memory,
@@ -56,7 +56,7 @@ def on_thinking(
         "memories": memories,
     }
     write_user_local_json(user_name, json_data)
-    text = reply(request, user_name, selected_memory)
+    text = reply_to_greeting(request, user_name, selected_memory)
     print(face + f"{user_name}さん、考え中です。少々お待ち下さい。")
     return RobotEvent.REPLY_READY, text, memories
 
