@@ -21,6 +21,10 @@ uv run python -m mirocore.terminal_robot
 ```bash
 docker compose run --rm mirocore uv run pytest
 ```
+ローカルでのテストコマンド
+```bash
+uv run pytest -v
+```
 
 ## ヴィジョン
 MirocBotは、単なる便利な道具としてロボットを作るのではなく、人と長い時間を共にし、関係を築いていく存在を目指します。
