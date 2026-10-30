@@ -19,7 +19,7 @@ from mirocore.terminal_robot.write_read import (
 import json
 import os
 
-def terminal_robot_state(state: RobotState, event: RobotEvent) -> RobotState:
+def     terminal_robot_state(state: RobotState, event: RobotEvent) -> RobotState:
     ## ここは、状態遷移用の関数を読み出すためのスクリプト
     try:
         ### ここで、LISTENINGになっている
