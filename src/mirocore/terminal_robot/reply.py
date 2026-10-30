@@ -1,3 +1,12 @@
+import json
+from pathlib import Path
+from mirocore.terminal_robot.write_read import (
+    local_memory_path,
+    read_user_local_json,
+    write_user_local_json,
+    user_local_file_exists,
+)
+
 """応答生成用のモジュール"""
 _REPLY_KEYWORDS_INDEX: dict[str, str] = {
     "こんにちは": "こんにちは!",
@@ -62,14 +71,6 @@ def add_memory(memories: list[str], item: str) -> list[str]:
     ## リストを返す
     return memories
 
-## 記憶の選定
-# リストと今の発言から、返信に乗せる1件か None を返します。
-# 最初は「直前に追加した1件」で十分
-#件数が増えてから、発言と重なる文を選ぶ規則を足す
-# def select_memory(memories: list[str], request: str) -> str | None:
-#     if len(memories) == 0:
-#         return None
-#     return memories[-1]
 
 ## 現発言のキーワード取得用の関数
 ## 入力：発言内容
@@ -111,3 +112,17 @@ def reply_to_self_introduction(is_new: bool) -> str | None:
     if is_new:
         return "覚えておくね。"
     return "それは前に聞いたよ。"
+
+## 記憶の選定
+## 入力：記憶内容、ユーザー名
+## 出力：検索対象のデータ
+
+def search_memory(memories: list[str], query: str) -> list[str]:
+    response: list[str] = []
+    if query is None or query == "":
+        return response
+    
+    for memory in memories:
+        if query in memory:
+            response.append(memory)
+    return response
