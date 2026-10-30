@@ -87,19 +87,6 @@ def test_reply_phrase_function() -> None:
         assert reply_phrase(input) == output
 
 def test_propose_memory_function() -> str | None:
-    # requests = [
-    #     "僕は、男です。",
-    #     "私は、女です。", 
-    #     "自分自身は、男です。",  
-    #     "隆人は、女です。"
-    # ]
-    # for request in requests:
-    #     result = propose_memory(request)
-    #     if result:
-    #         assert result == request
-    #     else:
-    #         assert result is None
-
     inputs = [
         ("僕は、男です。", "僕は、男です。"),
         ("私は、女です。", "私は、女です。"),
@@ -111,23 +98,42 @@ def test_propose_memory_function() -> str | None:
         assert propose_memory(request) == expected
 
 
-def test_add_memory_function() -> None:
+@pytest.mark.parametrize(
+    ("item", "excepted"),
+    [
+        (
+            "俺は、男です。",
+            [
+                "僕は、男です。", 
+                "私は、女です。", 
+                "俺は、男です。"
+            ]
+        ),
+        (
+            "私は、女です。",
+            [
+                "僕は、男です。",
+                "私は、女です。"
+            ]
+        ),
+        (
+            "",
+            [
+                "僕は、男です。",
+                "私は、女です。"
+            ]
+        ),
+    ]
+)
+def test_add_memory_function(item: str, excepted: list[str]) -> None:
     memories = [
         "僕は、男です。",
-        "私は、女です。", 
+        "私は、女です。"
     ]
-    copy_list = memories.copy()
-    item = "俺は、男です。"
-
-    before = len(memories)
     result = add_memory(memories, item)
-
+    
     assert result is memories
-    assert result[-1] == item
-    assert len(result) == before + 1
-
-    copy_list.append(item)
-    assert result == copy_list
+    assert result == excepted
 
 def test_reply_to_self_introduction_function() -> str:
     is_new = True
