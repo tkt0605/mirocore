@@ -1,5 +1,6 @@
 from mirocore.terminal_robot.write_read import (
     local_memory_path,
+    read_user_local_json,
 )
 from mirocore.terminal_robot.options import (
     terminal_robot_state,
@@ -47,32 +48,63 @@ def test_on_listening(monkeypatch: MonkeyPatch) -> None:
     assert event == RobotEvent.EMPTY_INPUT
     assert request == ""
 
-def test_on_thinking_to_greeting(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    ("req", "excepted_event", "excepted_text", "excepted_memories"),
+    [
+        (
+            "こんにちは", 
+            RobotEvent.REPLY_READY, 
+            "こんにちは!", 
+            [
+                "僕は、日大生です。"
+            ]
+        ),
+        (
+            "僕は、21歳です。", 
+            RobotEvent.REPLY_READY, 
+            "覚えておくね。", 
+            [
+                "僕は、日大生です。",
+                "僕は、21歳です。",
+            ]
+        ),
+        (
+            "僕は、日大生です。",
+            RobotEvent.REPLY_READY,
+            "それは前に聞いたよ。",
+            [
+                "僕は、日大生です。",
+            ]
+        ),
+    ]
+)
+def test_on_thinking(
+    monkeypatch: MonkeyPatch,
+    tmp_path: Path,
+    req: str,
+    excepted_event: RobotEvent,
+    excepted_text: str,
+    excepted_memories: list[str]
+) -> None:
     monkeypatch.chdir(tmp_path)
-    request = "こんにちは"
     user_name = "test"
-    memories: list[str] = []
+    memories = [
+        "僕は、日大生です。"
+    ]
+    local_memory_path(user_name).parent.mkdir(parents=True)
     state = RobotState.THINKING
 
-    local_memory_path(user_name).parent.mkdir(parents=True)
+    event, text, memories = on_thinking(state, req, user_name, memories)
 
-    event, text, memories = on_thinking(state, request, user_name, memories)
-    
-    assert event == RobotEvent.REPLY_READY
-    assert text == "こんにちは!"
-    assert memories == []
+    assert event == excepted_event
+    assert text == excepted_text
+    assert memories == excepted_memories
 
-def test_on_thinking_to_self_introduction(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.chdir(tmp_path)
-    user_name = "test"
-    request = "僕は、日大生です。"
-    local_memory_path(user_name).parent.mkdir(parents=True)
-    state = RobotState.THINKING
-    memories: list[str] = []
-    event, text, memories = on_thinking(state, request, user_name, memories)
-    assert event == RobotEvent.REPLY_READY
-    assert text == "覚えておくね。"
-    assert memories == [request] 
+    excepted_memory_path = {
+        "name": user_name,
+        "memories": excepted_memories
+    }
+    assert read_user_local_json(user_name) == excepted_memory_path
 
 def test_create_json_folder(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
