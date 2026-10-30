@@ -47,16 +47,6 @@ _TARGET_NORMALIZATION_WORDS: list[str] = [
     "教えてください。"
 ]
 def normalize_word(request: str) -> str | None:
-    # word_switch: bool = False
-    # text = request.strip().replace("\u3000", "").replace(" ", "")
-    # for word in _TARGET_NORMALIZATION_WORDS:
-    #     word_switch = text.endswith(word)
-    #     if word_switch == True:
-    #         text = text.removesuffix(word)
-    #         return text
-    #     elif word_switch == False:
-    #         return None
-    # return None
     text = request.strip().replace("\u3000", "").replace(" ", "")
     for word in _TARGET_NORMALIZATION_WORDS:
         if text.endswith(word):
