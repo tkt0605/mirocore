@@ -18,6 +18,8 @@ from pathlib import Path
 import pytest
 import os
 
+
+## terminal_robot_stateのテスト条件追加
 def test_terminal_robot_state() -> None:
     state = RobotState.IDLE
     event = RobotEvent.START_LISTENING
@@ -30,23 +32,48 @@ def test_terminal_robot_state() -> None:
     exceptted_error_state = RobotState.IDLE
     assert terminal_robot_state(state, event) == exceptted_error_state
 
-def test_on_listening(monkeypatch: MonkeyPatch) -> None:
-    input_text = iter(["こんにちは", "", "/q"])
+@pytest.mark.parametrize(
+    ("input_text", "excepted_event", "excepted"),
+    [
+        (
+            "こんにちは",
+            RobotEvent.CONFIRM_INPUT,
+            "こんにちは"
+        ),
+        (
+            "",
+            RobotEvent.EMPTY_INPUT,
+            ""
+        ),
+        (
+            "   ",
+            RobotEvent.EMPTY_INPUT,
+            ""
+        ),
+        (
+            "　",
+            RobotEvent.EMPTY_INPUT,
+            ""
+        ),
+    ]
+)
+def test_on_listening(
+    monkeypatch: MonkeyPatch,
+    input_text: str,
+    excepted_event: RobotEvent,
+    excepted: str,
+) -> None:
     monkeypatch.setattr(
         "builtins.input",
-        lambda _: next(input_text)
+        lambda _: input_text
     )
-    user_name = "test"
     state = RobotState.LISTENING
-    event, request = on_listening(state, user_name)
-
-    assert event == RobotEvent.CONFIRM_INPUT
-    assert request == "こんにちは"
+    user_name = "test"
 
     event, request = on_listening(state, user_name)
 
-    assert event == RobotEvent.EMPTY_INPUT
-    assert request == ""
+    assert event == excepted_event
+    assert request == excepted
 
 @pytest.mark.parametrize(
     ("req", "excepted_event", "excepted_text", "excepted_memories"),
