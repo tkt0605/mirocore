@@ -1,4 +1,5 @@
 from tkinter import NO
+from types import NoneType
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.expressive import add_prefix
 from mirocore.terminal_robot.reply import (
@@ -7,7 +8,8 @@ from mirocore.terminal_robot.reply import (
  reply_phrase,
  propose_memory,
  add_memory,
- reply_to_self_introduction
+ reply_to_self_introduction,
+ search_memory
 )
 from mirocore.terminal_robot.write_read import (
     user_local_file_exists,
@@ -38,6 +40,18 @@ def on_listening(state: RobotState, user_name: str) -> tuple[RobotEvent,str]:
     if request.strip() == "":
         return RobotEvent.EMPTY_INPUT, ""
     return RobotEvent.CONFIRM_INPUT, request
+
+def reply_to_search_memory(
+    memories: list[str],
+    query: str
+) -> str | None:
+    search_results = search_memory(memories, query)
+    result_counter = len(search_results)
+    if result_counter == 0:
+        return "検索結果がありません。"
+    else:
+        body = "\n".join(search_results)
+        return f"{body}"
 
 def on_thinking(
     state: RobotState,
