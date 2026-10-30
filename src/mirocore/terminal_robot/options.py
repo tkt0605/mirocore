@@ -1,3 +1,4 @@
+from doctest import FAIL_FAST
 from tkinter import NO
 from types import NoneType
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
@@ -53,6 +54,11 @@ def reply_to_search_memory(
         body = "\n".join(search_results)
         return f"{body}"
 
+def request_to_search(remembered_memory: str | None) -> bool:
+    requester: str = remembered_memory
+    if requester is not None:
+        return True
+
 def on_thinking(
     state: RobotState,
     request: str,
@@ -62,12 +68,15 @@ def on_thinking(
     face = add_prefix(False, state)
     proposed_memory = propose_memory(request)
     remembered_memory = reply_remember(proposed_memory)
+    search_request = request_to_search(remembered_memory)
     before_memory = len(memories)
     if remembered_memory is not None:
         memories = add_memory(memories, remembered_memory)
         after_memory = len(memories)
         added_memory = after_memory - before_memory
         text = reply_to_self_introduction(added_memory > 0)
+    elif search_request is False:
+        text = reply_to_search_memory(memories, request)
     else:
         text = reply_to_greeting(request, user_name)
         
