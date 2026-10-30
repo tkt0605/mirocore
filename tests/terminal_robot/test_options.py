@@ -20,17 +20,58 @@ import os
 
 
 ## terminal_robot_stateのテスト条件追加
-def test_terminal_robot_state() -> None:
-    state = RobotState.IDLE
-    event = RobotEvent.START_LISTENING
-    exceptted_state = RobotState.LISTENING
-
-    assert terminal_robot_state(state, event) == exceptted_state
-
-    state = RobotState.ERROR
-    event = RobotEvent.ERROR_SHOWN
-    exceptted_error_state = RobotState.IDLE
-    assert terminal_robot_state(state, event) == exceptted_error_state
+@pytest.mark.parametrize(
+    ("state", "event", "excepted_state"),
+    [
+        (
+            RobotState.IDLE,
+            RobotEvent.START_LISTENING,
+            RobotState.LISTENING
+        ),
+        (
+            RobotState.LISTENING,
+            RobotEvent.CONFIRM_INPUT,
+            RobotState.THINKING
+        ),
+        (
+            RobotState.THINKING,
+            RobotEvent.REPLY_READY,
+            RobotState.SPEAKING
+        ),
+        (
+            RobotState.SPEAKING,
+            RobotEvent.OUTPUT_DONE,
+            RobotState.IDLE
+        ),
+        (
+            RobotState.ERROR,
+            RobotEvent.ERROR_SHOWN,
+            RobotState.IDLE
+        ),
+        (
+            RobotState.LISTENING,
+            RobotEvent.EMPTY_INPUT,
+            RobotState.EMPTY
+        ),
+        (
+            RobotState.EMPTY,
+            RobotEvent.START_LISTENING,
+            RobotState.LISTENING
+        ),
+        (
+            RobotState.EMPTY,
+            RobotEvent.ERROR_SHOWN,
+            RobotState.IDLE
+        )
+    ]
+)
+def test_terminal_robot_state(
+    state: RobotState,
+    event: RobotEvent,
+    excepted_state: RobotState,
+) -> None:
+    
+    assert terminal_robot_state(state, event) == excepted_state
 
 @pytest.mark.parametrize(
     ("input_text", "excepted_event", "excepted"),
