@@ -6,7 +6,6 @@ from mirocore.terminal_robot.reply import (
     _REPLY_KEYWORDS_INDEX,
     propose_memory,
     add_memory,
-    # select_memory,
     reply_to_self_introduction,
 )
 import pytest
