@@ -10,7 +10,9 @@ from mirocore.terminal_robot.reply import (
  propose_memory,
  add_memory,
  reply_to_self_introduction,
- search_memory
+ search_memory,
+ normalize,
+ normalize_word
 )
 from mirocore.terminal_robot.write_read import (
     user_local_file_exists,
@@ -59,6 +61,13 @@ def request_to_search(remembered_memory: str | None) -> bool:
     if requester is not None:
         return True
 
+def catch_up_query_to_request(request: str) -> str | None:
+    normalized_query = normalize(request)
+    normalized_word = normalize_word(normalized_query)
+    if normalized_word is None:
+        return None
+    return normalized_word
+
 def on_thinking(
     state: RobotState,
     request: str,
@@ -75,8 +84,9 @@ def on_thinking(
         after_memory = len(memories)
         added_memory = after_memory - before_memory
         text = reply_to_self_introduction(added_memory > 0)
-    elif search_request is False:
-        text = reply_to_search_memory(memories, request)
+    elif search_request is None:
+        search_target = catch_up_query_to_request(request)
+        text = reply_to_search_memory(memories, search_target)
     else:
         text = reply_to_greeting(request, user_name)
         

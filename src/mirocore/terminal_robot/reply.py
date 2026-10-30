@@ -29,12 +29,47 @@ _TARGET_NORMALIZATION: list[str] = [
     "。",
     "・",
 ]
+
+_TARGET_NORMALIZATION_WORDS: list[str] = [
+    "です",
+    "でした",
+    "ます",
+    "ました",
+    "ません",
+    "ませんでした",
+    "ませんでした",
+    "ですか",
+    "について",
+    "覚えてる",
+    "覚えてるか",
+    "覚えてますか",
+    "教えて",
+    "教えてください。"
+]
+def normalize_word(request: str) -> str | None:
+    # word_switch: bool = False
+    # text = request.strip().replace("\u3000", "").replace(" ", "")
+    # for word in _TARGET_NORMALIZATION_WORDS:
+    #     word_switch = text.endswith(word)
+    #     if word_switch == True:
+    #         text = text.removesuffix(word)
+    #         return text
+    #     elif word_switch == False:
+    #         return None
+    # return None
+    text = request.strip().replace("\u3000", "").replace(" ", "")
+    for word in _TARGET_NORMALIZATION_WORDS:
+        if text.endswith(word):
+            query = text.removesuffix(word)
+            return query if query != "" else None
+    return None
 ## 正規化用の関数
 def normalize(request: str) -> str:
     text = request.strip().replace("\u3000", "").replace(" ", "")
     for mark in _TARGET_NORMALIZATION:
         text = text.replace(mark, "")
     return text
+
 
 ## 記憶機能用の関数
 ## 入力：記憶内容
