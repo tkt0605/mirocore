@@ -39,12 +39,11 @@ _TARGET_NORMALIZATION_WORDS: list[str] = [
     "ませんでした",
     "ませんでした",
     "ですか",
-    "について",
-    "覚えてる",
-    "覚えてるか",
-    "覚えてますか",
-    "教えて",
-    "教えてください。"
+    "について覚えてる",
+    "について覚えてるか",
+    "について覚えてますか",
+    "について教えて",
+    "について教えてください"
 ]
 def normalize_word(request: str) -> str | None:
     text = request.strip().replace("\u3000", "").replace(" ", "")
@@ -75,6 +74,8 @@ def reply_remember(memory: str | None) -> str | None:
 # 最初の規則は狭くてよく、たとえば「僕は、男です。」のように、ユーザーが自分について述べた文だけを候補
 def propose_memory(request: str) -> str | None:
     ## 最初の規則は狭くてよく、たとえば「僕は、男です。」のように、ユーザーが自分について述べた文だけを候補
+    ### ここでは、以下のリストに含まれるワードが入っているリクエストにのみ保存を許可している。
+    ### このような設計では」あまり優しい設計とは言えない。
     target_words = ["僕", "私", "俺", "自分", "自分自身", "私自身"]
     for word in target_words:
         if word in request:

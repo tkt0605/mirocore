@@ -56,10 +56,10 @@ def reply_to_search_memory(
         body = "\n".join(search_results)
         return f"{body}"
 
-def request_to_search(remembered_memory: str | None) -> bool:
-    requester: str = remembered_memory
-    if requester is not None:
-        return True
+def request_to_search(request: str) -> bool:
+    normalized_request = normalize(request)
+    normalized_text = normalize_word(normalized_request)
+    return normalized_text is not None
 
 def catch_up_query_to_request(request: str) -> str | None:
     normalized_query = normalize(request)
@@ -77,16 +77,19 @@ def on_thinking(
     face = add_prefix(False, state)
     proposed_memory = propose_memory(request)
     remembered_memory = reply_remember(proposed_memory)
-    search_request = request_to_search(remembered_memory)
+    search_request = request_to_search(request)
     before_memory = len(memories)
-    if remembered_memory is not None:
+    
+    if search_request is True:
+        search_target = catch_up_query_to_request(request)
+        text = reply_to_search_memory(memories, search_target)
+
+    elif remembered_memory is not None:
         memories = add_memory(memories, remembered_memory)
         after_memory = len(memories)
         added_memory = after_memory - before_memory
         text = reply_to_self_introduction(added_memory > 0)
-    elif search_request is None:
-        search_target = catch_up_query_to_request(request)
-        text = reply_to_search_memory(memories, search_target)
+    
     else:
         text = reply_to_greeting(request, user_name)
         
