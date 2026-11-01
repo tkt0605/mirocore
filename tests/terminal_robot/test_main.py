@@ -34,17 +34,40 @@ def tmp_path_example(tmp_path) -> None:
     assert file_path.read_text(encoding="utf-8") == "Hello World To Test Code !"
 
 ## 空文字 "" も終了し、「こんにちは、名前さん」は出ず、IDLE状態に戻るかどうか
-def test_empty_name_and_quit(monkeypatch, capsys) -> None:
-    user_name = "テスト"
-    answers = iter([user_name, "", "/q"])
+def test_empty_name_and_quit(monkeypatch, capsys, tmp_path) -> None:
+    monkeypatch.chdir(tmp_path)
+    
+    mock_input = Mock(
+        side_effect=[
+            "テスト",
+            "",
+            "/q"
+        ]
+    )
+
     monkeypatch.setattr(
         "builtins.input",
-        lambda _: next(answers)
+        mock_input
     )
     main()
+
     out = capsys.readouterr()
-    assert f"MIROC(・o・) > {user_name}さん空白です。もう一度聞いてください。" in out.out
+
+    assert "MIROC(•‿•) > テストさん、待ってるよ" in out.out
+    assert "MIROC(・o・) > テストさん空白です。もう一度聞いてください。" in out.out
     assert "終了します。" in out.out
+    assert mock_input.call_count == 3
+
+    # user_name = "テスト"
+    # answers = iter([user_name, "", "/q"])
+    # monkeypatch.setattr(
+    #     "builtins.input",
+    #     lambda _: next(answers)
+    # )
+    # main()
+    # out = capsys.readouterr()
+    # assert f"MIROC(・o・) > {user_name}さん空白です。もう一度聞いてください。" in out.out
+    # assert "終了します。" in out.out
 
 
 # ## requestのinput関数に`Ctrl + C`を入力すると終了するかどうか
@@ -64,7 +87,29 @@ def test_ctrl_c_and_quit(monkeypatch, capsys) -> None:
 
     assert "終了します。" in out.out
 
+# ## requestのinput関数に`Ctrl + C`を入力すると終了するかどうか
+def test_listening_ctrl_c_and_quit(monkeypatch, capsys, tmp_path) -> None:
+    monkeypatch.chdir(tmp_path)
 
+    mock_input = Mock(
+        side_effect=[
+            "テスト",
+            KeyboardInterrupt()
+        ]
+    )
+
+    monkeypatch.setattr(
+        "builtins.input",
+        mock_input
+    )
+
+    main()
+
+    out = capsys.readouterr()
+    assert "MIROC(•‿•) > テストさん、待ってるよ" in out.out
+    assert "終了します。" in out.out
+
+    assert mock_input.call_count == 2
 
 ## 確認文 名前 が出ること
 def test_username_is_exists(monkeypatch, capsys, tmp_path) -> None:
