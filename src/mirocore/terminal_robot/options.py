@@ -127,6 +127,8 @@ def create_json_folder(user_name: str) -> None:
 # localでは、nameのみでいい。しかし、globalでは、nameとUUIDを組み合わせて、ユーザーを特定する。
 # <ユーザー名>/<ユーザー名>_memories.local.jsonと<ユーザー名>/<ユーザー名>_memories.jsonの二つ作成。
 # localの方は、編集可能。しかし、globalの方は、編集不可。
+
+# R02の根本原因
 def inputer_user_name() -> str | None:
     try:
         REQUEST_NAME: str = "あなたの名前は？"

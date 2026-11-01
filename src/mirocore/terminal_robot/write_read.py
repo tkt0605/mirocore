@@ -2,7 +2,7 @@ from pathlib import Path
 import json
 import os
 
-
+# R02の根本原因
 def local_memory_path(user_name: str) -> Path:
     return Path("memory_index") / user_name / f"{user_name}_memories.local.json"
 
@@ -44,6 +44,7 @@ def write_user_local_json(
         else:
             raise ValueError(f"Invalid key: {key}")
 
+    # R01の根本原因
     with open(
         local_memory_path(user_name),
         "w",
