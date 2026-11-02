@@ -1,4 +1,6 @@
+from email.policy import default
 import os
+from re import X
 from mirocore.terminal_robot.write_read import (
     local_memory_path,
     write_user_local_json,
@@ -6,7 +8,7 @@ from mirocore.terminal_robot.write_read import (
 )
 from pathlib import Path
 import pytest
-from pytest import MonkeyPatch
+from pytest import MonkeyPatch, raises
 
 # 読み込み操作時のテスト
 def test_local_memory_path() -> None:
@@ -35,7 +37,6 @@ def test_read_user_local_json_invalid_file(monkeypatch: MonkeyPatch, tmp_path: P
 
 # 書き込み操作時のテスト
 ## 追加するテストを以下に記入
-### - os.replace()が失敗しても、元ファイルの内容が変わらない。
 ### - 失敗後、一時ファイルが残らない。
 
 def test_write_user_local_json(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
@@ -84,10 +85,13 @@ def test_write_user_local_json_add_save(monkeypatch: MonkeyPatch, tmp_path: Path
     assert read_user_local_json(user_name) == result
 
 ## 書き込み途中で例外が発生しても、元ファイルの内容が変わらない
+## 失敗後、一時ファイルが残らない。
 def test_write_user_local_json_exception(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
     user_name = "test"
     local_memory_path(user_name).parent.mkdir(parents=True)
+    path = local_memory_path(user_name)
+
     default_data = {
         "name": user_name,
         "memories": [
@@ -117,12 +121,19 @@ def test_write_user_local_json_exception(monkeypatch: MonkeyPatch, tmp_path: Pat
         }
         write_user_local_json(user_name, exception_data)
     assert read_user_local_json(user_name) == default_data
+    names = {
+        file.name for file in path.parent.iterdir()
+    }
+    assert names == {
+        f"{user_name}_memories.local.json"
+    }
 ## os.replace()が失敗しても、元ファイルの内容が変わらない。
+## 失敗後、一時ファイルが残らない。
 def test_write_user_local_json_os_replace(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
     user_name = "test"
     local_memory_path(user_name).parent.mkdir(parents=True)
-
+    path = local_memory_path(user_name)
     default = {
         "name": user_name,
         "memories": [
@@ -135,6 +146,7 @@ def test_write_user_local_json_os_replace(monkeypatch: MonkeyPatch, tmp_path: Pa
         ## ここに、replcaeが失敗した用のコードを書く
         ## 例外の発生
         raise OSError("replace失敗を確認")
+    ## 
     monkeypatch.setattr(
         "os.replace",
         failing_replace
@@ -150,7 +162,13 @@ def test_write_user_local_json_os_replace(monkeypatch: MonkeyPatch, tmp_path: Pa
         }
         write_user_local_json(user_name, exception_data)
     assert read_user_local_json(user_name) == default
-    
+    names = {
+        file.name for file in path.parent.iterdir()
+    }
+    assert names == {
+        f"{user_name}_memories.local.json"
+    }
+
 def test_write_user_local_json_same_save(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
     user_name = "test"
