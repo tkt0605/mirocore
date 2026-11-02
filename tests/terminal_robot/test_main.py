@@ -58,17 +58,6 @@ def test_empty_name_and_quit(monkeypatch, capsys, tmp_path) -> None:
     assert "終了します。" in out.out
     assert mock_input.call_count == 3
 
-    # user_name = "テスト"
-    # answers = iter([user_name, "", "/q"])
-    # monkeypatch.setattr(
-    #     "builtins.input",
-    #     lambda _: next(answers)
-    # )
-    # main()
-    # out = capsys.readouterr()
-    # assert f"MIROC(・o・) > {user_name}さん空白です。もう一度聞いてください。" in out.out
-    # assert "終了します。" in out.out
-
 
 # ## requestのinput関数に`Ctrl + C`を入力すると終了するかどうか
 def test_ctrl_c_and_quit(monkeypatch, capsys) -> None:

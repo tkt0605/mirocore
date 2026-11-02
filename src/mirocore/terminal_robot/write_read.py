@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 import os
+import tempfile
 
 # R02の根本原因
 def local_memory_path(user_name: str) -> Path:
@@ -14,43 +15,62 @@ def write_user_local_json(
     user_name: str,
     data: dict[str, str | list[str]]
 ) -> None:
+    path = local_memory_path(user_name)
     try:
-        with open(
-            local_memory_path(user_name),
-            "r",
-            encoding="utf-8"
-        ) as f:
+        with open(path, "r", encoding="utf-8") as f:
             loaded_data = json.load(f)
+
     except FileNotFoundError:
         loaded_data = {
             "name": user_name
         }
+    except json.JSONDecodeError as e:
+        raise RuntimeError(
+            f"既存のJSONファイルが破損しているため、安全のために保存を中止しました: {path}"
+        ) from e
 
-    ## 新規データ追加
-    # 1周目: key=name, value="takato"
-    # 2周目: key=memories, value=["takatoの記憶1", "takatoの記憶2"]
     for key, value in data.items():
         if key == "name":
-            loaded_data[key] = value
+            if isinstance(value, str):
+                loaded_data[key] = value
+            else:
+                raise ValueError("The 'name' key must be a string.")
+        
         elif key == "memories":
-            # キーがない時は、空のリストを作成
-            if key not in loaded_data:
+            if "memories" not in loaded_data:
                 loaded_data[key] = []
-            ## 記憶を追加
-            for memory in value:
-                ## 記憶がない時は、追加
+
+            if isinstance(value, str):
+                memories_to_add = [value]
+            else:
+                memories_to_add = value
+            for memory in memories_to_add:
                 if memory not in loaded_data[key]:
                     loaded_data[key].append(memory)
+        
         else:
             raise ValueError(f"Invalid key: {key}")
+    dir_name = os.path.dirname(path)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)
+    
+    temp_file = None
+    try:
+        with tempfile.NamedTemporaryFile("w", dir=dir_name, delete=False, encoding="utf-8") as tf:
+            temp_file = tf.name
+            json.dump(loaded_data, tf, ensure_ascii=False, indent=4)
+        
+        if temp_file:
+            os.replace(temp_file, path)
 
-    # R01の根本原因
-    with open(
-        local_memory_path(user_name),
-        "w",
-        encoding="utf-8"
-    ) as f:
-        json.dump(loaded_data, f, ensure_ascii=False, indent=4)
+    except OSError as e:
+        raise RuntimeError(
+            f"ユーザーのローカルデータの保存に失敗しました: {e}"
+        ) from e
+    
+    finally:
+        if temp_file is not None and os.path.exists(temp_file):
+            os.remove(temp_file)
         
 
 

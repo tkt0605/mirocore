@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from pytest import MonkeyPatch
 
+# 読み込み操作時のテスト
 def test_local_memory_path() -> None:
     user_name = "test"
     file_path = Path("memory_index") / user_name / f"{user_name}_memories.local.json"
@@ -29,6 +30,13 @@ def test_read_user_local_json_invalid_file(monkeypatch: MonkeyPatch, tmp_path: P
     local_memory_path(user_name).parent.mkdir(parents=True)
     
     assert read_user_local_json(user_name) is None
+
+
+# 書き込み操作時のテスト
+## 追加するテストを以下に記入
+### - 書き込み途中で例外が発生しても、元ファイルの内容が変わらない
+### - os.replace()が失敗しても、元ファイルの内容が変わらない。
+### - 失敗後、一時ファイルが残らない。
 
 def test_write_user_local_json(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
