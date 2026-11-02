@@ -34,7 +34,6 @@ def test_read_user_local_json_invalid_file(monkeypatch: MonkeyPatch, tmp_path: P
 
 # 書き込み操作時のテスト
 ## 追加するテストを以下に記入
-### - 書き込み途中で例外が発生しても、元ファイルの内容が変わらない
 ### - os.replace()が失敗しても、元ファイルの内容が変わらない。
 ### - 失敗後、一時ファイルが残らない。
 
@@ -52,6 +51,7 @@ def test_write_user_local_json(monkeypatch: MonkeyPatch, tmp_path: Path) -> None
     }
     write_user_local_json(user_name, data)
     assert read_user_local_json(user_name) == data
+
 
 def test_write_user_local_json_add_save(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
@@ -81,6 +81,41 @@ def test_write_user_local_json_add_save(monkeypatch: MonkeyPatch, tmp_path: Path
         ]
     }
     assert read_user_local_json(user_name) == result
+
+## 書き込み途中で例外が発生しても、元ファイルの内容が変わらない
+def test_write_user_local_json_exception(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.chdir(tmp_path)
+    user_name = "test"
+    local_memory_path(user_name).parent.mkdir(parents=True)
+    default_data = {
+        "name": user_name,
+        "memories": [
+            "僕は、テストユーザです。"
+        ]
+    }
+    write_user_local_json(user_name, default_data)
+
+    def failing_dump(data, file, **kwargs):
+        ## file文字列を書く
+        ## 例外を発生させる
+        file.write("エラーですね。")
+        raise OSError("書き込み失敗を確認")
+
+    monkeypatch.setattr(
+        "json.dump",
+        failing_dump
+    )
+
+    with pytest.raises(RuntimeError):
+        exception_data = {
+            "name": user_name,
+            "memories": [
+                "僕は、テストユーザです。",
+                "私もテストユーザです。",
+            ]
+        }
+        write_user_local_json(user_name, exception_data)
+    assert read_user_local_json(user_name) == default_data
 
 def test_write_user_local_json_same_save(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
