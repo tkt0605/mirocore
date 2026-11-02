@@ -1,3 +1,4 @@
+import os
 from mirocore.terminal_robot.write_read import (
     local_memory_path,
     write_user_local_json,
@@ -116,7 +117,40 @@ def test_write_user_local_json_exception(monkeypatch: MonkeyPatch, tmp_path: Pat
         }
         write_user_local_json(user_name, exception_data)
     assert read_user_local_json(user_name) == default_data
+## os.replace()が失敗しても、元ファイルの内容が変わらない。
+def test_write_user_local_json_os_replace(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.chdir(tmp_path)
+    user_name = "test"
+    local_memory_path(user_name).parent.mkdir(parents=True)
 
+    default = {
+        "name": user_name,
+        "memories": [
+            "僕は、テストユーザです。",
+        ]
+    }
+    write_user_local_json(user_name, default)
+
+    def failing_replace(src, dst):
+        ## ここに、replcaeが失敗した用のコードを書く
+        ## 例外の発生
+        raise OSError("replace失敗を確認")
+    monkeypatch.setattr(
+        "os.replace",
+        failing_replace
+    )
+
+    with pytest.raises(RuntimeError):
+        exception_data = {
+            "name": user_name,
+            "memories": [
+                "僕は、テストユーザです。",
+                "僕は、ロボットが好きです。",
+            ]
+        }
+        write_user_local_json(user_name, exception_data)
+    assert read_user_local_json(user_name) == default
+    
 def test_write_user_local_json_same_save(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)
     user_name = "test"
