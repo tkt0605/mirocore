@@ -83,5 +83,10 @@ def read_user_local_json(user_name: str) -> dict[str, str | list[str]] | None:
         ) as f:
             data = json.load(f)
         return data
+
     except FileNotFoundError:
+        return None
+
+    except json.JSONDecodeError as json_error:
+        print(f"既存のJSONファイルが破損しているため、読み込めませんでした: {json_error}")
         return None
