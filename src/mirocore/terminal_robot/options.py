@@ -150,7 +150,8 @@ def inputer_user_name() -> str | None:
             data = read_user_local_json(user_name)
             if data is None:
                 return user_name
-            return data["name"]
+            # return data["name"]
+            return data
     except KeyboardInterrupt:
         print("\n終了します。")
         return None

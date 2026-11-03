@@ -20,22 +20,22 @@ def main() -> None:
     ## 初期条件の設定
     state = RobotState.IDLE
     event = RobotEvent.START_LISTENING
-    user_name = inputer_user_name()
+    user_data = inputer_user_name()
     print(" hello world ")
-    if user_name is None:
+    if user_data is None or user_data.get("name") is None:
         return
-    memories = control_memories(user_name)
+    user_name = user_data.get("name")
+    memories = user_data.get("memories")
     if memories is None:
-        return
-    # loaded_data = read_user_local_json(user_name)
-    # memories: list[str] = []
-    # if loaded_data is not None and isinstance(loaded_data.get("memories"), list):
-    #     memories = [
-    #         item for item in loaded_data["memories"] if isinstance(item, str)
-    #     ]
-    # else:
-    #     memories = []
+        memories = []
+    else:
+        memories = [
+            item for item in memories if isinstance(item, str)
+        ]
 
+    # memories = control_memories(user_name)
+    # if memories is None:
+    #     return
     while True:
         try:
             state = terminal_robot_state(state, event)
@@ -62,22 +62,21 @@ def main() -> None:
             event =RobotEvent.START_LISTENING
             continue
 
-def control_memories(user_name: str) -> list[str] | None:
-    try:
-        # loaded_data = user_name.get("memories")
-        loaded_data = read_user_local_json(user_name)
-        if loaded_data is not None and isinstance(loaded_data.get("memories"), list):
-            return [
-                item for item in loaded_data["memories"] if isinstance(item, str)
-            ]
-        else:
-            return []
+# def control_memories(user_name: str) -> list[str] | None:
+#     try:
+#         loaded_data = read_user_local_json(user_name)
+#         if loaded_data is not None and isinstance(loaded_data.get("memories"), list):
+#             return [
+#                 item for item in loaded_data["memories"] if isinstance(item, str)
+#             ]
+#         else:
+#             return []
 
-    except FileNotFoundError:
-        return []
+#     except FileNotFoundError:
+#         return []
 
-    except json.JSONDecodeError as json_error:
-        print(f"既存のJSONファイルが破損しているため、読み込めませんでした: {json_error}")
+#     except json.JSONDecodeError as json_error:
+#         print(f"既存のJSONファイルが破損しているため、読み込めませんでした: {json_error}")
 
 if __name__ == "__main__":
     main()
