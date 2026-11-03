@@ -130,35 +130,36 @@ def create_json_folder(user_name: str) -> None:
 
 # R02の根本原因
 def inputer_user_name() -> str | None:
-    try:
-        REQUEST_NAME: str = "あなたの名前は？"
-        user_name = input(f"{REQUEST_NAME}: ")
-        if user_name.strip() == "":
-            print("名前が必要です。")
-            return inputer_user_name()
-        ## ユーザー名の有無を判断。
-        if not user_local_file_exists(user_name):
-            print(f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n")
-            create_json_folder(user_name)
-            data: dict[str, str | list[str]] = {
-                "name": user_name,
-                "memories": [],
-            }
-            write_user_local_json(user_name, data)
-            return user_name
-        else:
-            data = read_user_local_json(user_name)
-            if data is None:
+    while True:
+        try:
+            REQUEST_NAME: str = "あなたの名前は？"
+            user_name = input(f"{REQUEST_NAME}: ")
+            if user_name.strip() == "":
+                print("名前が必要です。")
+                continue
+            ## ユーザー名の有無を判断。
+            if not user_local_file_exists(user_name):
+                print(f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n")
+                create_json_folder(user_name)
+                data: dict[str, str | list[str]] = {
+                    "name": user_name,
+                    "memories": [],
+                }
+                write_user_local_json(user_name, data)
                 return user_name
-            # return data["name"]
-            return data
-    except KeyboardInterrupt:
-        print("\n終了します。")
-        return None
-    
-    except TypeError as type_error:
-        print(f"予期せぬエラーが発生しました: {type_error}")
+            else:
+                data = read_user_local_json(user_name)
+                if data is None:
+                    continue
+                return data["name"]
+                # return data
+        except KeyboardInterrupt:
+            print("\n終了します。")
+            return None
+        
+        except TypeError as type_error:
+            print(f"予期せぬエラーが発生しました: {type_error}")
 
-    except KeyError as key_error:
-        print(f"キーが見つかりません: {key_error}")
-        return None
+        except KeyError as key_error:
+            print(f"キーが見つかりません: {key_error}")
+            return None
