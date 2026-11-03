@@ -140,7 +140,7 @@ def inputer_user_name() -> str | None:
         if not user_local_file_exists(user_name):
             print(f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n")
             create_json_folder(user_name)
-            data: dict[str, list[str]] = {
+            data: dict[str, str | list[str]] = {
                 "name": user_name,
                 "memories": [],
             }
@@ -149,10 +149,15 @@ def inputer_user_name() -> str | None:
         else:
             data = read_user_local_json(user_name)
             if data is None:
-                return None
-            if not "name" in data:
-                return None
+                return user_name
             return data["name"]
     except KeyboardInterrupt:
         print("\n終了します。")
-        return None 
+        return None
+    
+    except TypeError as type_error:
+        print(f"予期せぬエラーが発生しました: {type_error}")
+
+    except KeyError as key_error:
+        print(f"キーが見つかりません: {key_error}")
+        return None
