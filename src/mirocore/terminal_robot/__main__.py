@@ -46,6 +46,7 @@ def main() -> None:
                     break
             elif state == RobotState.THINKING:
                 event, reply_text, memories = on_thinking(state, request, user_name, memories)
+
             elif state == RobotState.SPEAKING:
                 event = on_speaking(state, reply_text)
             elif state == RobotState.IDLE:
@@ -55,10 +56,11 @@ def main() -> None:
         except KeyboardInterrupt:
             print("\n終了します。")
             break
-        except json.JSONDecodeError as json_error:
-            print(f"既存のJSONファイルが破損しているため、読み込めませんでした: {json_error}")
-        except Exception as error:
-            print(f"予期せぬエラーが発生しました: {error}")
+        except RuntimeError as runtime_error:
+            print(f"実行時エラーが発生しました: {runtime_error}")
+            state =RobotState.IDLE
+            event =RobotEvent.START_LISTENING
+            continue
 
 def control_memories(user_name: str) -> list[str] | None:
     try:
@@ -76,7 +78,6 @@ def control_memories(user_name: str) -> list[str] | None:
 
     except json.JSONDecodeError as json_error:
         print(f"既存のJSONファイルが破損しているため、読み込めませんでした: {json_error}")
-        return None
 
 if __name__ == "__main__":
     main()
