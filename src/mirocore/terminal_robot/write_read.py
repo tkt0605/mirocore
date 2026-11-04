@@ -3,8 +3,23 @@ import json
 import os
 import tempfile
 
+
+## json用のフォルダ作成用のかんす
+def create_json_folder(user_name: str) -> None:
+    os.makedirs(local_memory_path(user_name).parent, exist_ok=True)
+    print(f"memory_index/{user_name}フォルダを作成しました: {user_name}")
+
 # R02の根本原因
 def local_memory_path(user_name: str) -> Path:
+    """
+    ユーザー名を検証し、記憶ファイルの保存先を返す。
+    名前が不正な場合は、ValueErrorを返す。
+    """
+    if not 1 <= len(user_name) <= 32:
+        raise ValueError("ユーザー名は、1~32文字で入力してください。")
+
+    if not all(char.isalnum() or char in ("-", "_") for char in user_name):
+        raise ValueError("名前には文字・数字・_・-のみ使えます。")
     return Path("memory_index") / user_name / f"{user_name}_memories.local.json"
 
 def user_local_file_exists(user_name: str) -> bool:

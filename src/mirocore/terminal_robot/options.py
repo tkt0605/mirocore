@@ -19,6 +19,7 @@ from mirocore.terminal_robot.write_read import (
     write_user_local_json,
     read_user_local_json,
     local_memory_path,
+    create_json_folder,
 )
 import json
 import os
@@ -115,11 +116,6 @@ def on_empty(state: RobotState, user_name: str) -> RobotEvent:
 def on_idle(state:RobotState) -> RobotEvent:
     return RobotEvent.START_LISTENING
 
-## json用のフォルダ作成用のかんす
-def create_json_folder(user_name: str) -> None:
-    os.makedirs(f"memory_index/{user_name}", exist_ok=True)
-    print(f"memory_index/{user_name}フォルダを作成しました: {user_name}")
-
 # <ユーザー名>_memories.jsonというファイルを作成
 # 以上のファイルがない時は、この関数を読み出して、ファイルを作らせる。
 # ファイルがある時は、そのファイルを読み出して、ユーザー名を返す。
@@ -163,3 +159,7 @@ def inputer_user_name() -> tuple[str, list[str]] | None:
         except KeyError as key_error:
             print(f"キーが見つかりません: {key_error}")
             return None
+        
+        except ValueError as value_error:
+            print(f"無効な名前です: {value_error}")
+            continue
