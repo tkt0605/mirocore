@@ -129,7 +129,7 @@ def create_json_folder(user_name: str) -> None:
 # localの方は、編集可能。しかし、globalの方は、編集不可。
 
 # R02の根本原因
-def inputer_user_name() -> str | None:
+def inputer_user_name() -> tuple[str, list[str]] | None:
     while True:
         try:
             REQUEST_NAME: str = "あなたの名前は？"
@@ -146,13 +146,13 @@ def inputer_user_name() -> str | None:
                     "memories": [],
                 }
                 write_user_local_json(user_name, data)
-                return user_name
+                return user_name, []
             else:
                 data = read_user_local_json(user_name)
                 if data is None:
                     continue
-                return data["name"]
-                # return data
+                return user_name, data["memories"]
+
         except KeyboardInterrupt:
             print("\n終了します。")
             return None

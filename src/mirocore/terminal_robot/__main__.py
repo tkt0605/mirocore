@@ -20,20 +20,11 @@ def main() -> None:
     ## 初期条件の設定
     state = RobotState.IDLE
     event = RobotEvent.START_LISTENING
-    user_name = inputer_user_name()
-    print(" hello world ")
-    if user_name is None:
+    result = inputer_user_name()
+    if result is None:
         return
-    
-    memories = read_user_local_json(user_name)
-    if isinstance(memories, dict) and isinstance(memories.get("memories"), list):
-        memories = [
-            item for item in memories
-            if isinstance(item, str)
-        ]
-    else:
-        memories = []
-
+    print(" hello world ")
+    user_name, memories = result
     while True:
         try:
             state = terminal_robot_state(state, event)
