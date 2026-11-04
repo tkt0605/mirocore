@@ -8,6 +8,8 @@ from mirocore.terminal_robot.options import inputer_user_name
 from pathlib import Path
 import pytest
 
+from mirocore.terminal_robot.write_read import read_user_local_json, write_user_local_json
+
 user_name = ""
 # テスト用の一言テスト
 
@@ -129,6 +131,33 @@ def test_username_is_empty(monkeypatch, capsys, tmp_path) -> None:
     assert "名前が必要です。" in out.out
     assert user_name == "テスト"
     assert memories == []
+
+##  保存済みの記憶を持つユーザーで、記憶本文を正しく読み戻せるか
+def test_user_has_memories(monkeypatch, capsys, tmp_path) -> None:
+    monkeypatch.chdir(tmp_path)
+    user_name = "テスト"
+    write_user_local_json(
+        user_name,
+        {
+            "name": user_name,
+            "memories": [
+                "僕は、ロボットが大好きです。"
+            ]
+        }
+    )
+
+    answers = iter(["テスト", "/q"])
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(answers)
+    )
+    user_name, read_memories = inputer_user_name()
+
+    assert user_name is not None
+
+    assert read_memories == ["僕は、ロボットが大好きです。"]
+    assert user_name == "テスト"
+
 
 ## 2回目以降の発言でも同じ名前が使われ、名前を聞き直さないこと
 def test_username_is_same(monkeypatch, capsys, tmp_path) -> None:
