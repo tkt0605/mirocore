@@ -108,9 +108,10 @@ def test_username_is_exists(monkeypatch, capsys, tmp_path) -> None:
         lambda _: next(answers)
     )
     monkeypatch.chdir(tmp_path)
-    user_name = inputer_user_name()
+    user_name, memories = inputer_user_name()
     assert user_name is not None
     assert user_name == "テスト"
+    assert memories == []
 
 ## 空の名前で 名前が必要です。 と出て、再入力できること
 def test_username_is_empty(monkeypatch, capsys, tmp_path) -> None:
@@ -121,12 +122,13 @@ def test_username_is_empty(monkeypatch, capsys, tmp_path) -> None:
     )
     monkeypatch.chdir(tmp_path)
     
-    user_name = inputer_user_name()
+    user_name, memories = inputer_user_name()
     assert user_name is not None
 
     out = capsys.readouterr()
     assert "名前が必要です。" in out.out
     assert user_name == "テスト"
+    assert memories == []
 
 ## 2回目以降の発言でも同じ名前が使われ、名前を聞き直さないこと
 def test_username_is_same(monkeypatch, capsys, tmp_path) -> None:
