@@ -250,3 +250,11 @@ def test_memory_survives_restart_and_is_searched(
     assert "MIROC(•_•) > テストさん、考え中です。少々お待ち下さい。" in out.out
     assert "僕の趣味は、読書です。" in out.out
     assert "終了します。" in out.out
+
+    ### 3回目: 検索後のJSONも確認
+    data_after_search = read_user_local_json(user_name)
+
+    assert data_after_search is not None
+
+    assert data_after_search["name"] == user_name
+    assert data_after_search["memories"] == ["僕の趣味は、読書です。"]
