@@ -170,16 +170,9 @@ def test_username_is_same(monkeypatch, capsys, tmp_path) -> None:
         lambda _: next(answers)
     )
     monkeypatch.chdir(tmp_path)
-    # user_name = inputer_user_name()
-    # assert user_name is not None
     ## main()関数内にもinputer_user_nameがあるからわざわざもう一回inputer_user_nameを呼ぶ必要はない
     main()
     out = capsys.readouterr()
-    # assert out.out.count("あなたの名前は？") == 1
-    # assert out.out.count(f"あなたの名前は、{user_name}ですね。\nよろしくお願いします。\n") == 1
-    # assert out.out.count(f"MIROC(•‿•) > {user_name}さん、待ってるよ") == 3
-    # assert out.out.count(f"MIROC(•_•) > {user_name}さん、考え中です。少々お待ち下さい。") == 2
-    # assert out.out.count("あなたの名前は、testですね。\nよろしくお願いします。\n") == 1
     assert out.out.count("MIROC(•‿•) > testさん、待ってるよ") == 3
     assert out.out.count("MIROC(•_•) > testさん、考え中です。少々お待ち下さい。") == 2
     assert "終了します。" in out.out
@@ -203,4 +196,57 @@ def test_username_is_ctrl_c(monkeypatch, capsys) -> None:
     assert called == 1
     assert "待ってるよ" not in out.out
     assert "あなたの名前は、" not in out.out
+    assert "終了します。" in out.out
+
+
+## 記憶を追加した後、検索を仕掛けてその出力と、記憶追加した出力が合致するかどうか。
+def test_memory_survives_restart_and_is_searched(
+    monkeypatch,
+    capsys,
+    tmp_path
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    user_name = "テスト"
+    ## 　1回目：　名前を入力し、記憶を追加
+    first_input = Mock(
+        side_effect=[
+            user_name,
+            "僕の趣味は、読書です。",
+            "/q"
+        ]
+    )
+    monkeypatch.setattr(
+        "builtins.input",
+        first_input
+    )
+    main()
+    capsys.readouterr()
+
+    ## 中間：　ファイルに保存されているのかどうかの確認　
+    data = read_user_local_json(user_name)
+
+    assert data is not None
+
+    assert data["name"] == user_name
+    assert data["memories"] == ["僕の趣味は、読書です。"]
+
+    ## 2回目: 検索を仕掛けて、記憶追加した出力と合致するかどうかの確認
+    second_input = Mock(
+        side_effect=[
+            user_name,  
+            "趣味について教えて",
+            "/q"
+        ]
+    )
+    monkeypatch.setattr(
+        "builtins.input",
+        second_input
+    )
+    main()
+
+    out = capsys.readouterr()
+
+    assert "MIROC(•‿•) > テストさん、待ってるよ" in out.out
+    assert "MIROC(•_•) > テストさん、考え中です。少々お待ち下さい。" in out.out
+    assert "僕の趣味は、読書です。" in out.out
     assert "終了します。" in out.out
