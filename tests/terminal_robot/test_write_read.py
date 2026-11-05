@@ -1,6 +1,5 @@
 from email.policy import default
 import os
-from re import X
 from mirocore.terminal_robot.write_read import (
     local_memory_path,
     write_user_local_json,
@@ -15,6 +14,19 @@ def test_local_memory_path() -> None:
     user_name = "test"
     file_path = Path("memory_index") / user_name / f"{user_name}_memories.local.json"
     assert local_memory_path(user_name) == file_path
+
+@pytest.mark.parametrize(
+    ("user_name", "expected_exception"),
+    [
+        ("../../outside", ValueError),
+        ("..", ValueError),
+        ("s/a", ValueError),
+        ("/tmp/x", ValueError),
+    ]
+)
+def test_local_memory_path_invalid_name(user_name: str, expected_exception: type[Exception]) -> None:
+    with pytest.raises(expected_exception):
+        local_memory_path(user_name)
 
 def test_read_user_local_json(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.chdir(tmp_path)

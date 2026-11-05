@@ -258,3 +258,33 @@ def test_memory_survives_restart_and_is_searched(
 
     assert data_after_search["name"] == user_name
     assert data_after_search["memories"] == ["僕の趣味は、読書です。"]
+
+
+## 無効な名前では、ValueErrorを返し、再入力を求める
+@pytest.mark.parametrize(
+    ("user_name", "expected_messge"),
+    [
+        ("../../outside", "名前には文字・数字・_・-のみ使えます。"),
+        ("..", "名前には文字・数字・_・-のみ使えます。"),
+        ("s/a", "名前には文字・数字・_・-のみ使えます。"),
+        ("/tmp/x", "名前には文字・数字・_・-のみ使えます。"),
+        ("sssssssssssssssssssssssssssssssssssssssssssss", "ユーザー名は、1~32文字で入力してください。"),
+    ]
+)
+def test_invalid_name(monkeypatch, capsys, tmp_path, user_name: str, expected_messge: str) -> None:
+    monkeypatch.chdir(tmp_path)
+    answers = iter(
+        [
+            user_name,
+            "テスト",
+            "/q"
+        ]
+    )
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(answers)
+    )
+
+    assert inputer_user_name() == ("テスト", [])
+    out = capsys.readouterr()
+    assert expected_messge in out.out
