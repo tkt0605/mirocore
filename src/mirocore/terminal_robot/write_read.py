@@ -4,11 +4,6 @@ import os
 import tempfile
 
 
-## json用のフォルダ作成用のかんす
-def create_json_folder(user_name: str) -> None:
-    os.makedirs(local_memory_path(user_name).parent, exist_ok=True)
-    print(f"memory_index/{user_name}フォルダを作成しました: {user_name}")
-
 # R02の根本原因
 def local_memory_path(user_name: str) -> Path:
     """
@@ -24,6 +19,11 @@ def local_memory_path(user_name: str) -> Path:
 
 def user_local_file_exists(user_name: str) -> bool:
     return local_memory_path(user_name).exists()
+
+## json用のフォルダ作成用のかんす
+def create_json_folder(user_name: str) -> None:
+    os.makedirs(local_memory_path(user_name).parent, exist_ok=True)
+    print(f"memory_index/{user_name}フォルダを作成しました: {user_name}")
 
 
 def write_user_local_json(
