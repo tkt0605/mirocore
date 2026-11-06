@@ -1,3 +1,4 @@
+from mirocore.config import get_memory_index_dir
 from pathlib import Path
 import json
 import os
@@ -10,12 +11,14 @@ def local_memory_path(user_name: str) -> Path:
     ユーザー名を検証し、記憶ファイルの保存先を返す。
     名前が不正な場合は、ValueErrorを返す。
     """
+    memory_index_dir = get_memory_index_dir()
     if not 1 <= len(user_name) <= 32:
         raise ValueError("ユーザー名は、1~32文字で入力してください。")
 
     if not all(char.isalnum() or char in ("-", "_") for char in user_name):
         raise ValueError("名前には文字・数字・_・-のみ使えます。")
-    return Path("memory_index") / user_name / f"{user_name}_memories.local.json"
+    
+    return memory_index_dir / user_name / f"{user_name}_memories.local.json"
 
 def user_local_file_exists(user_name: str) -> bool:
     return local_memory_path(user_name).exists()
