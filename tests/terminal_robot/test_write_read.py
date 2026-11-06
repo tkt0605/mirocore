@@ -1,5 +1,6 @@
 from email.policy import default
 import os
+from mirocore.config import get_memory_index_dir
 from mirocore.terminal_robot.write_read import (
     local_memory_path,
     write_user_local_json,
@@ -12,7 +13,8 @@ from pytest import MonkeyPatch, raises
 # 読み込み操作時のテスト
 def test_local_memory_path() -> None:
     user_name = "test"
-    file_path = Path("memory_index") / user_name / f"{user_name}_memories.local.json"
+    memory_index_dir = get_memory_index_dir()
+    file_path = memory_index_dir / user_name / f"{user_name}_memories.local.json"
     assert local_memory_path(user_name) == file_path
 
 @pytest.mark.parametrize(
@@ -29,7 +31,8 @@ def test_local_memory_path_invalid_name(user_name: str, expected_exception: type
         local_memory_path(user_name)
 
 def test_read_user_local_json(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "test"
     local_memory_path(user_name).parent.mkdir(parents=True) 
     data = {
@@ -40,7 +43,8 @@ def test_read_user_local_json(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     assert read_user_local_json(user_name) == data
 
 def test_read_user_local_json_invalid_file(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "new_user"
     local_memory_path(user_name).parent.mkdir(parents=True)
     
@@ -52,7 +56,8 @@ def test_read_user_local_json_invalid_file(monkeypatch: MonkeyPatch, tmp_path: P
 ### - 失敗後、一時ファイルが残らない。
 
 def test_write_user_local_json(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "test"
     local_memory_path(user_name).parent.mkdir(parents=True)
     data = {
@@ -68,7 +73,8 @@ def test_write_user_local_json(monkeypatch: MonkeyPatch, tmp_path: Path) -> None
 
 
 def test_write_user_local_json_add_save(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "test"
     local_memory_path(user_name).parent.mkdir(parents=True)
     data = {
@@ -99,7 +105,8 @@ def test_write_user_local_json_add_save(monkeypatch: MonkeyPatch, tmp_path: Path
 ## 書き込み途中で例外が発生しても、元ファイルの内容が変わらない
 ## 失敗後、一時ファイルが残らない。
 def test_write_user_local_json_exception(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "test"
     local_memory_path(user_name).parent.mkdir(parents=True)
     path = local_memory_path(user_name)
@@ -142,7 +149,8 @@ def test_write_user_local_json_exception(monkeypatch: MonkeyPatch, tmp_path: Pat
 ## os.replace()が失敗しても、元ファイルの内容が変わらない。
 ## 失敗後、一時ファイルが残らない。
 def test_write_user_local_json_os_replace(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "test"
     local_memory_path(user_name).parent.mkdir(parents=True)
     path = local_memory_path(user_name)
@@ -182,7 +190,8 @@ def test_write_user_local_json_os_replace(monkeypatch: MonkeyPatch, tmp_path: Pa
     }
 
 def test_write_user_local_json_same_save(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "test"
     local_memory_path(user_name).parent.mkdir(parents=True)
     default_data = {
@@ -202,7 +211,8 @@ def test_write_user_local_json_same_save(monkeypatch: MonkeyPatch, tmp_path: Pat
     assert read_user_local_json(user_name) == default_data
 
 def test_write_user_local_json_invalid_key(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "test"
     local_memory_path(user_name).parent.mkdir(parents=True)
 

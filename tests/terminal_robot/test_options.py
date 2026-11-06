@@ -154,7 +154,8 @@ def test_on_thinking(
     excepted_text: str,
     excepted_memories: list[str]
 ) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "test"
     memories = [
         "僕は、日大生です。"

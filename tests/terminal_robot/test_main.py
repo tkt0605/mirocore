@@ -37,8 +37,8 @@ def tmp_path_example(tmp_path) -> None:
 
 ## 空文字 "" も終了し、「こんにちは、名前さん」は出ず、IDLE状態に戻るかどうか
 def test_empty_name_and_quit(monkeypatch, capsys, tmp_path) -> None:
-    monkeypatch.chdir(tmp_path)
-    
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     mock_input = Mock(
         side_effect=[
             "テスト",
@@ -80,7 +80,8 @@ def test_ctrl_c_and_quit(monkeypatch, capsys) -> None:
 
 # ## requestのinput関数に`Ctrl + C`を入力すると終了するかどうか
 def test_listening_ctrl_c_and_quit(monkeypatch, capsys, tmp_path) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
 
     mock_input = Mock(
         side_effect=[
@@ -109,7 +110,8 @@ def test_username_is_exists(monkeypatch, capsys, tmp_path) -> None:
         "builtins.input",
         lambda _: next(answers)
     )
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name, memories = inputer_user_name()
     assert user_name is not None
     assert user_name == "テスト"
@@ -122,7 +124,8 @@ def test_username_is_empty(monkeypatch, capsys, tmp_path) -> None:
         "builtins.input",
         lambda _: next(answers)
     )
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     
     user_name, memories = inputer_user_name()
     assert user_name is not None
@@ -134,7 +137,8 @@ def test_username_is_empty(monkeypatch, capsys, tmp_path) -> None:
 
 ##  保存済みの記憶を持つユーザーで、記憶本文を正しく読み戻せるか
 def test_user_has_memories(monkeypatch, capsys, tmp_path) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "テスト"
     write_user_local_json(
         user_name,
@@ -169,7 +173,8 @@ def test_username_is_same(monkeypatch, capsys, tmp_path) -> None:
         # モック関数
         lambda _: next(answers)
     )
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     ## main()関数内にもinputer_user_nameがあるからわざわざもう一回inputer_user_nameを呼ぶ必要はない
     main()
     out = capsys.readouterr()
@@ -205,7 +210,8 @@ def test_memory_survives_restart_and_is_searched(
     capsys,
     tmp_path
 ) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     user_name = "テスト"
     ## 　1回目：　名前を入力し、記憶を追加
     first_input = Mock(
@@ -272,7 +278,8 @@ def test_memory_survives_restart_and_is_searched(
     ]
 )
 def test_invalid_name(monkeypatch, capsys, tmp_path, user_name: str, expected_messge: str) -> None:
-    monkeypatch.chdir(tmp_path)
+    # monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
     answers = iter(
         [
             user_name,
