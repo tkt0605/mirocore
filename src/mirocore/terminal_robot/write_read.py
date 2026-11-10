@@ -107,6 +107,9 @@ def read_user_local_json(user_name: str) -> dict[str, str | list[str]] | None:
 def delete_user_local_file(user_name: str) -> None:
     path = local_memory_path(user_name)
     try:
+        ## ユーザーの個人記憶の一覧。
+        data = read_user_local_json(user_name)
+        print(f"{data}\n")
         path.unlink(missing_ok=True)
     except OSError as os_error:
         raise RuntimeError(

@@ -7,6 +7,7 @@ class RobotState(Enum):
     THINKING = "thinking"
     SPEAKING = "speaking"
     EMPTY = "empty"
+    DELETE = "delete"
 
 ## ここでは、状態変化のきっかけを表すイベントを定義。
 class RobotEvent(Enum):
@@ -16,7 +17,7 @@ class RobotEvent(Enum):
     OUTPUT_DONE = "# 出力完了"
     ERROR_SHOWN = "# エラー表示"
     EMPTY_INPUT = "# 空文字入力"
-
+    DELETE_MEMORY = "# 記憶削除"
 ## ここでは、状態遷移ルールを定義している。
 _TRANSITIONS: dict[tuple[RobotState, RobotEvent], RobotState] = {
     (RobotState.IDLE, RobotEvent.START_LISTENING): RobotState.LISTENING,
@@ -26,6 +27,8 @@ _TRANSITIONS: dict[tuple[RobotState, RobotEvent], RobotState] = {
     (RobotState.ERROR, RobotEvent.ERROR_SHOWN): RobotState.IDLE,
     (RobotState.LISTENING, RobotEvent.EMPTY_INPUT): RobotState.EMPTY,
     (RobotState.EMPTY, RobotEvent.START_LISTENING): RobotState.LISTENING,
+    (RobotState.LISTENING, RobotEvent.DELETE_MEMORY): RobotState.DELETE,
+    (RobotState.DELETE, RobotEvent.START_LISTENING): RobotState.LISTENING,
 }
 
 def transition(state: RobotState, event: RobotEvent) -> RobotState:

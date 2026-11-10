@@ -5,6 +5,7 @@ from mirocore.terminal_robot.options import (
     on_listening,
     on_thinking,
     on_speaking,
+    on_delete_memory,
     on_empty,
     on_idle,
 )
@@ -33,6 +34,10 @@ def main() -> None:
                 if request in { "/q", "/quit", "/exit" }:
                     print("\n終了します。")
                     break
+                elif request in { "/d", "/delete", "/delete_memory" }:
+                    event = RobotEvent.DELETE_MEMORY
+                    event = on_delete_memory(state, event, user_name)
+                    continue
             elif state == RobotState.THINKING:
                 event, reply_text, memories = on_thinking(state, request, user_name, memories)
 
@@ -41,7 +46,9 @@ def main() -> None:
             elif state == RobotState.IDLE:
                 event = on_idle(state)
             elif state == RobotState.EMPTY:
-                event= on_empty(state, user_name)
+                event= RobotEvent.DELETE_MEMORY
+                on_delete_memory(state, event, user_name)
+                continue
         except KeyboardInterrupt:
             print("\n終了します。")
             break

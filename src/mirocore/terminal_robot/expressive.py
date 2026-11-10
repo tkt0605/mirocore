@@ -15,6 +15,8 @@ def add_prefix(is_user:bool, state) -> str:
             return "(^‿^)"
         elif state == state.EMPTY:
             return "(・o・)"
+        elif state == state.DELETE:
+            return "（・_・）"
         else:
             return "(×_×)"
     
