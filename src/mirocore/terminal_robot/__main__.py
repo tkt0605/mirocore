@@ -35,9 +35,8 @@ def main() -> None:
                     print("\n終了します。")
                     break
                 elif request in { "/d", "/delete", "/delete_memory" }:
-                    event = RobotEvent.DELETE_MEMORY
-                    event = on_delete_memory(state, event, user_name)
-                    continue
+                    state = RobotState.DELETE
+                    state, event = on_delete_memory(state, event, user_name)
             elif state == RobotState.THINKING:
                 event, reply_text, memories = on_thinking(state, request, user_name, memories)
 

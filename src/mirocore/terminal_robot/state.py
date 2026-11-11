@@ -28,7 +28,7 @@ _TRANSITIONS: dict[tuple[RobotState, RobotEvent], RobotState] = {
     (RobotState.LISTENING, RobotEvent.EMPTY_INPUT): RobotState.EMPTY,
     (RobotState.EMPTY, RobotEvent.START_LISTENING): RobotState.LISTENING,
     (RobotState.LISTENING, RobotEvent.DELETE_MEMORY): RobotState.DELETE,
-    (RobotState.DELETE, RobotEvent.START_LISTENING): RobotState.LISTENING,
+    (RobotState.DELETE, RobotEvent.START_LISTENING): RobotState.LISTENING
 }
 
 def transition(state: RobotState, event: RobotEvent) -> RobotState:
