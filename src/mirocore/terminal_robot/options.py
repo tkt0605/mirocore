@@ -117,11 +117,11 @@ def on_empty(state: RobotState, user_name: str) -> RobotEvent:
 def on_idle(state:RobotState) -> RobotEvent:
     return RobotEvent.START_LISTENING
 
-def on_delete_memory(state: RobotState, event: RobotEvent, user_name: str) -> tuple[RobotState, RobotEvent]:
+def on_delete_memory(state: RobotState, user_name: str) -> RobotEvent:
     face = add_prefix(False, state)
     delete_user_local_file(user_name)
     print(face + f"{user_name}さん、記憶を削除します。")
-    return RobotState.DELETE, RobotEvent.START_LISTENING
+    return RobotEvent.START_LISTENING
 
 # <ユーザー名>_memories.jsonというファイルを作成
 # 以上のファイルがない時は、この関数を読み出して、ファイルを作らせる。
