@@ -1,9 +1,11 @@
+from mirocore.terminal_robot.normalized import (
+    normalize,
+    _REPLY_KEYWORDS_INDEX,
+)
 from mirocore.terminal_robot.reply import (
     reply_to_greeting,
-    normalize,
     reply_remember,
     reply_phrase,
-    _REPLY_KEYWORDS_INDEX,
     propose_memory,
     add_memory,
     reply_to_self_introduction,
