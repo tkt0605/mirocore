@@ -114,3 +114,11 @@ def delete_memory(memories: list[str], query: str) -> list[str]:
         return memories
     
     return remaining
+
+def extract_search_keywords(memories: list[str], query: str) -> list[str]:
+    """
+        検索用の正規化を行い、対象を取り出す。
+        検索用の正規化を行い、対象を取り出す。
+        queryが空、対象がない場合は、空リストを返す。
+    """
+    
