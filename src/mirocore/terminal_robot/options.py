@@ -17,6 +17,7 @@ from mirocore.terminal_robot.normalized import (
     normalize,
     extract_query,
     extract_delete_target,
+    extract_search_keywords,
 )
 from mirocore.terminal_robot.write_read import (
     specific_delete_user_local_json,
@@ -65,17 +66,9 @@ def reply_to_search_memory(
 
 def request_to_search(request: str) -> bool:
     return extract_query(request) is not None
-    # normalized_request = normalize(request)
-    # normalized_text = normalize_word(normalized_request)
-    # return normalized_text is not None
 
 def catch_up_query_to_request(request: str) -> str | None:
     return extract_query(request)
-    # normalized_query = normalize(request)
-    # normalized_word = normalize_word(normalized_query)
-    # if normalized_word is None:
-    #     return None
-    # return normalized_word
 
 def on_thinking(
     state: RobotState,
@@ -146,20 +139,6 @@ def on_delete(memories: list[str], query:str, user_name: str) -> list[str]:
         specific_delete_user_local_json(user_name, remaining)
     return remaining
     
-    # if not query:
-    #     return memories
-    
-    # normalized_delete = normalized_delete_req(query)
-    # if not normalized_delete:
-    #     return memories
-
-    # response = memories.copy()
-    # for memory in memories:
-    #     if normalized_delete == memory:
-    #         response.remove(memory)
-    #         specific_delete_user_local_json(user_name, response)
-    #         break
-    # return response
 # <ユーザー名>_memories.jsonというファイルを作成
 # 以上のファイルがない時は、この関数を読み出して、ファイルを作らせる。
 # ファイルがある時は、そのファイルを読み出して、ユーザー名を返す。

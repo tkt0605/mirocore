@@ -8,7 +8,6 @@
 自分の力にまでに落とし込むことを目標にして設計する。
 
 """
-from nt import listdrives
 import re
 import unicodedata
 
