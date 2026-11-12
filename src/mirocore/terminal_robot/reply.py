@@ -87,12 +87,15 @@ def reply_to_self_introduction(is_new: bool) -> str | None:
 ## 出力：検索対象のデータ
 
 def search_memory(memories: list[str], query: str) -> list[str]:
-    response: list[str] = []
-    if query is None or query == "":
-        return response
+    if not query:
+        return []
     
-    for memory in memories:
-        if query in memory:
-            response.append(memory)
-    return response
+    normalized_query = normalize(query)
 
+    if normalized_query == "":
+        return []
+    
+    return [
+        memory for memory in memories
+        if normalized_query in normalize(memory)
+    ]
