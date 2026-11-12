@@ -48,7 +48,7 @@ _QUERY_SUFFIX = re.compile(
 )
 _DELETE_SUFFIX = re.compile(
     r"(?:(?:を|は)?(?:削除|消去|消)して(?:ください)?"
-    r"|は(?:達成済み|達成完了|完了した))$"
+    r"|は(?:達成済み|達成ずみ|達成した|達成済|達成完了|完了した|終了した))$"
 )
 
 def normalize(text: str) -> str:
