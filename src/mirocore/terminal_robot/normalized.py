@@ -8,12 +8,106 @@
 自分の力にまでに落とし込むことを目標にして設計する。
 
 """
-def normalize_word(request: str) -> str | None:
-    pass
-## 正規化用の関数
-def normalize(request: str) -> str:
-    pass
+from itertools import count
+import re
+import unicodedata
 
-# 削除用の正規化関数
-def normalized_delete_req(request: str) -> str | None:
-    pass
+_REPLY_KEYWORDS_INDEX: dict[str, str] = {
+    "こんにちは": "こんにちは！",
+    "おはよう": "おはようございます！",
+    "おやすみ": "おやすみなさい！",
+    "ありがとう": "どういたしまして！",
+    "すみません": "大丈夫です！",
+    "ごめんなさい": "大丈夫です！",
+    "こんばんは": "こんばんは！",
+    "さようなら": "さようなら！",
+    "お疲れ様": "お疲れ様です!",
+    "疲れた": "ゆっくり休んでください!",
+}
+
+# NKFC後も残る句読点と、変換まえの全角形の両方を除く
+_PUNCTUATION: tuple[str, ...] = (
+    "！",
+    "？"
+    "。",
+    "、",
+    "・",
+    "：",
+    "；",
+    "?",
+    "!",
+    ","
+)
+
+_SPEAKER_PREFIXES: tuple[str, ...] = (
+    "僕の",
+    "私の",
+    "あなたの",
+)
+_QUERY_SUFFIX = re.compile(
+    r"(?:について|を)?(?:覚えて(?:る|いる|ます|います)か?|教えて(?:ください)?)$"
+)
+_DELETE_SUFFIX = re.compile(
+    r"(?:(?:を|は)?(?:削除|消去|消)して(?:ください)?"
+    r"|は(?:達成済み|達成完了|完了した)"
+)
+
+def normalize(text: str) -> str:
+    """
+        表記の違いを吸収した比較用の文字列を返す。
+        NFKCとcasefoldの後、半角・全角スペースと句読点を除く。
+        検索・削除の指示表現は取り除かない。
+    """
+    # 表記の違いによる検索漏れを減らすために、文字列を揃える処理
+    normalized = unicodedata.normalize("NFKC", text.strip()).casefold()
+    # 空白と余白を取り除く
+    normalized = normalized.replace(" ", "").replace("\u3000", "")
+    for mark in _PUNCTUATION:
+        normalized = normalized.replace(mark, "")
+    return normalized
+
+def _extract_target(request: str, suffix: re.Pattern[str]) -> str | None:
+    """
+        正規化し、先頭の「僕の」とコマンドの語尾を取り除き、残りが空ならNoneを返す。
+    """
+    text = normalize(request).removeprefix(_SPEAKER_PREFIXES[2])
+    if suffix.search(text) is None:
+        return None
+    target = text.sub("", text, count=1)
+    if target == "":
+        return None
+    return target
+
+def extract_query(request: str) -> str | None:
+    """
+    質問コマンドから、検索対象を取り出す。対象がなければ、Noneを返す。
+    """
+    return _extract_target(request, _QUERY_SUFFIX)
+
+def extract_delete_target(request: str) -> str | None:
+    """
+        削除コマンドから、削除対象を取り出す。
+        対象がなければ、Noneを返す。
+    """
+    return _extract_target(request, _DELETE_SUFFIX)
+
+def delete_memory(memories: list[str], query: str) -> list[str]:
+    """
+        削除対象を含む記憶全てを除いたリストを返す。
+        queryが空、削除コマンドでない、対象が空の場合は、memoriesをそのまま返す。
+        比較前に記憶がわもnormalizeされていることを期待する。
+    """
+    target = extract_delete_target(query)
+    if target is None:
+        return memories
+    remaining = [
+        memory for memory in memories
+        if target not in normalize(memory)
+    ]
+    before_counter = len(memories)
+    after_counter = len(remaining)
+
+    if after_counter == before_counter:
+        return memories
+    
+    return remaining
