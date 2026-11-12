@@ -122,7 +122,7 @@ def test_on_listening(
         (
             "こんにちは", 
             RobotEvent.REPLY_READY, 
-            "こんにちは!", 
+            "こんにちは！", 
             [
                 "僕は、日大生です。"
             ]
