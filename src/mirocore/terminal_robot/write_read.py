@@ -5,7 +5,6 @@ import json
 import os
 import tempfile
 
-
 # R02の根本原因
 def local_memory_path(user_name: str) -> Path:
     """
@@ -115,3 +114,24 @@ def delete_user_local_file(user_name: str) -> None:
         raise RuntimeError(
             f"ユーザーのローカルデータの削除に失敗しました: {os_error}"
         ) from os_error
+
+def specific_delete_user_local_json(user_name: str, memories: list[str]) -> None:
+    path = local_memory_path(user_name)
+    with path.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+    data["memories"] = memories
+    temp_file = None
+    try:
+        # ここに特定の記憶を取り除いた記憶のデータリストで上書きする。
+        with tempfile.NamedTemporaryFile("w", dir=path.parent, delete=False, encoding="utf-8") as tf:
+            temp_file = tf.name
+            json.dump(data, tf, ensure_ascii=False, indent=4)
+        os.replace(temp_file, path)
+
+    except OSError as os_err:
+        raise RuntimeError(
+            f"ユーザーのローカルデータの削除に失敗しました: {os_err}"
+        ) from os_err
+    finally:
+        if temp_file is not None and os.path.exists(temp_file):
+            os.remove(temp_file)

@@ -16,6 +16,7 @@ from mirocore.terminal_robot.reply import (
  _TARGET_DELETE_WORDS
 )
 from mirocore.terminal_robot.write_read import (
+    specific_delete_user_local_json,
     user_local_file_exists,
     write_user_local_json,
     read_user_local_json,
@@ -134,7 +135,7 @@ def normalized_delete_req(request: str) -> str | None:
 # 記憶の削除
 # 入力：記憶内容、ユーザー名
 # 出力：検索対象のデータ
-def on_delete(memories: list[str], query:str) -> list[str]:
+def on_delete(memories: list[str], query:str, user_name: str) -> list[str]:
     if not query:
         return memories
     
@@ -146,6 +147,7 @@ def on_delete(memories: list[str], query:str) -> list[str]:
     for memory in memories:
         if normalized_delete == memory:
             response.remove(memory)
+            specific_delete_user_local_json(user_name, response)
             break
     return response
 # <ユーザー名>_memories.jsonというファイルを作成
