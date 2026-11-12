@@ -11,9 +11,11 @@ from mirocore.terminal_robot.reply import (
  add_memory,
  reply_to_self_introduction,
  search_memory,
- normalize,
- normalize_word,
- _TARGET_DELETE_WORDS
+)
+from mirocore.terminal_robot.normalized import (
+    normalize,
+    normalize_word,
+    normalized_delete_req,
 )
 from mirocore.terminal_robot.write_read import (
     specific_delete_user_local_json,
@@ -128,14 +130,6 @@ def on_delete_memory(state: RobotState, user_name: str) -> RobotEvent:
     delete_user_local_file(user_name)
     print(face + f"{user_name}さん、記憶を削除します。")
     return RobotEvent.START_LISTENING
-# 削除用の正規化関数
-def normalized_delete_req(request: str) -> str | None:
-    for word in _TARGET_DELETE_WORDS:
-        if request.endswith(word):
-            target = request.removesuffix(word).strip()
-            return target if target else None
-    return None
-
 # 記憶の削除
 # 入力：記憶内容、ユーザー名
 # 出力：検索対象のデータ
