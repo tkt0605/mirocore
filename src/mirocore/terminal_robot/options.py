@@ -79,24 +79,28 @@ def on_thinking(
     memories: list[str]
 ) -> tuple[RobotEvent, str, list[str]]:
     face = add_prefix(False, state)
+    delete_request = normalized_delete_req(request)
     proposed_memory = propose_memory(request)
     remembered_memory = reply_remember(proposed_memory)
     search_request = request_to_search(request)
     before_memory = len(memories)
-    
-    if search_request is True:
+    if delete_request is not None:
+        remaining_memories = on_delete(memories, request, user_name)
+        if len(remaining_memories) < before_memory:
+            text = f"{delete_request}を削除しました。"
+        else:
+            text = f"{delete_request}は見つかりませんでした。"
+        return RobotEvent.REPLY_READY, text, remaining_memories
+    elif search_request is True:
         search_target = catch_up_query_to_request(request)
         text = reply_to_search_memory(memories, search_target)
-
     elif remembered_memory is not None:
         memories = add_memory(memories, remembered_memory)
         after_memory = len(memories)
         added_memory = after_memory - before_memory
         text = reply_to_self_introduction(added_memory > 0)
-    
-    else:
+    elif remembered_memory is None:
         text = reply_to_greeting(request, user_name)
-        
     json_data: dict[str, str |list[str]] = {
         "name": user_name,
         "memories": memories,
