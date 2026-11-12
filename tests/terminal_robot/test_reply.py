@@ -12,53 +12,47 @@ from mirocore.terminal_robot.reply import (
 )
 import pytest
 
-request_lists = [
-    "こんにちは",
-    "こんばんは",
-    "おはよう",
-    "疲れた",
-    "お疲れ様",
-]
-
-request_normalized_lists = [
-    "こ んにちは",
-    "こ　んばんは",
-    "おはよう!",
-    "疲れた！",
-    "お疲れ様、・。",
-]
-
-unmatched_lists = [
-    "Hi",
-    "Hello",
-    "Good evening",
-    "Good morning",
-    "Good night",
-]
-
-response_lists = [
-    "こんにちは!",
-    "こんばんは!",
-    "おはようございます!",
-    "ゆっくり休んでください!",
-    "お疲れ様です!",
-]
-
 user_name = ""
-
-def test_reply_function() -> None:
+@pytest.mark.parametrize(
+    ("_request", "response"),
+    [
+        ("こんにちは", "こんにちは！"),
+        ("こんばんは", "こんばんは！"),
+        ("おはよう", "おはようございます！"),
+        ("疲れた", "ゆっくり休んでください！"),
+        ("お疲れ様", "お疲れ様です！"),
+    ]
+)
+def test_reply_function(_request: str, response: str) -> None:
     user_name = "テスト"
-    for request, response in zip(request_lists, response_lists):
-        assert reply_to_greeting(request, user_name) == f"{response}"
+    assert reply_to_greeting(_request, user_name) == response
 
-def test_normalize_function() -> None:
-    for request, normalized in zip(request_normalized_lists, request_lists):
-        assert normalize(request) == normalized
+@pytest.mark.parametrize(
+    ("normalized_request", "normalized_expected"),
+    [
+        ("こ んにちは", "こんにちは"),
+        ("こ　んばんは", "こんばんは"),
+        ("おはよう！", "おはよう"),
+        ("疲れた！", "疲れた"),
+        ("お疲れ様、・。", "お疲れ様"),
+    ]
+)
+def test_normalize_function(normalized_request: str, normalized_expected: str) -> None:
+    assert normalize(normalized_request) == normalized_expected
 
-def test_reply_function_with_fallback() -> None:
+@pytest.mark.parametrize(
+    ("unmatched", "expected"),
+    [
+        ("Hi", "テストさん、ごめんね。もう一度聞いてくれる？"),
+        ("Hello", "テストさん、ごめんね。もう一度聞いてくれる？"),
+        ("Good evening", "テストさん、ごめんね。もう一度聞いてくれる？"),
+        ("Good morning", "テストさん、ごめんね。もう一度聞いてくれる？"),
+        ("Good night", "テストさん、ごめんね。もう一度聞いてくれる？"),
+    ]
+)
+def test_reply_function_with_fallback(unmatched: str, expected: str) -> None:
     user_name = "テスト"
-    for unmatched in unmatched_lists:
-        assert reply_to_greeting(unmatched, user_name) == f"{user_name}さん、ごめんね。もう一度聞いてくれる？"
+    assert reply_to_greeting(unmatched, user_name) == f"{expected}"
 
 def test_reply_remember_function() -> None:
     assert reply_remember(None) is None
