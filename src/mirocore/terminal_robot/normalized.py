@@ -8,6 +8,7 @@
 自分の力にまでに落とし込むことを目標にして設計する。
 
 """
+from nt import listdrives
 import re
 import unicodedata
 
@@ -115,10 +116,20 @@ def delete_memory(memories: list[str], query: str) -> list[str]:
     
     return remaining
 
-def extract_search_keywords(memories: list[str], query: str) -> list[str]:
+def extract_search_keywords(text: str) -> list[str]:
     """
         検索用の正規化を行い、対象を取り出す。
         検索用の正規化を行い、対象を取り出す。
         queryが空、対象がない場合は、空リストを返す。
     """
+    search_lists: list[str] = []
+    keywords = text.split()
     
+    for keyword in keywords:
+        normalized = normalize(keyword)
+    
+        if normalized == "":
+            continue
+    
+        search_lists.append(normalized)
+    return search_lists
