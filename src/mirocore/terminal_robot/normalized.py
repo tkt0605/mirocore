@@ -28,7 +28,7 @@ _REPLY_KEYWORDS_INDEX: dict[str, str] = {
 # NKFC後も残る句読点と、変換まえの全角形の両方を除く
 _PUNCTUATION: tuple[str, ...] = (
     "！",
-    "？"
+    "？",
     "。",
     "、",
     "・",
@@ -36,7 +36,7 @@ _PUNCTUATION: tuple[str, ...] = (
     "；",
     "?",
     "!",
-    ","
+    ",",
 )
 
 _SPEAKER_PREFIXES: tuple[str, ...] = (

@@ -1,4 +1,3 @@
-from typing import final
 from mirocore.config import get_memory_index_dir
 from pathlib import Path
 import json
