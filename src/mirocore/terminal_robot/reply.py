@@ -48,6 +48,13 @@ _TARGET_NORMALIZATION_WORDS: list[str] = [
     "教えて",
     "教えてください"
 ]
+_TARGET_DELETE_WORDS: list[str] = [
+    "を削除して",
+    "を消去して",
+    "は達成済み",
+    "は達成完了",
+    "は完了した",
+]
 def normalize_word(request: str) -> str | None:
     text = request.strip().replace("\u3000", "").replace(" ", "")
     for word in _TARGET_NORMALIZATION_WORDS:
@@ -155,3 +162,4 @@ def search_memory(memories: list[str], query: str) -> list[str]:
         if query in memory:
             response.append(memory)
     return response
+
