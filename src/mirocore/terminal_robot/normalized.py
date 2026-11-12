@@ -8,7 +8,6 @@
 自分の力にまでに落とし込むことを目標にして設計する。
 
 """
-from itertools import count
 import re
 import unicodedata
 
@@ -49,7 +48,7 @@ _QUERY_SUFFIX = re.compile(
 )
 _DELETE_SUFFIX = re.compile(
     r"(?:(?:を|は)?(?:削除|消去|消)して(?:ください)?"
-    r"|は(?:達成済み|達成完了|完了した)"
+    r"|は(?:達成済み|達成完了|完了した))$"
 )
 
 def normalize(text: str) -> str:
@@ -70,10 +69,14 @@ def _extract_target(request: str, suffix: re.Pattern[str]) -> str | None:
     """
         正規化し、先頭の「僕の」とコマンドの語尾を取り除き、残りが空ならNoneを返す。
     """
-    text = normalize(request).removeprefix(_SPEAKER_PREFIXES[2])
+    text = normalize(request)
+    for prefix in sorted(_SPEAKER_PREFIXES, key=len, reverse=True):
+        if text.startswith(prefix):
+            text = text.removeprefix(prefix)
+            break
     if suffix.search(text) is None:
         return None
-    target = text.sub("", text, count=1)
+    target = suffix.sub("", text, count=1)
     if target == "":
         return None
     return target
