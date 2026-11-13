@@ -1,4 +1,5 @@
 from doctest import FAIL_FAST
+from re import search
 from tkinter import NO
 from types import NoneType
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
@@ -62,9 +63,6 @@ def reply_to_search_memory(
         return "検索結果がありません。"
     return "\n".join(search_results)
 
-def request_to_search(request: str) -> bool:
-    return extract_query(request) is not None
-
 def catch_up_query_to_request(request: str) -> str | None:
     return extract_query(request)
 
@@ -77,7 +75,8 @@ def on_thinking(
     face = add_prefix(False, state)
     
     delete_request = extract_delete_target(request)
-    search_target = extract_search_keywords(request)
+    search_target = extract_query(request)
+
     proposed_memory = propose_memory(request)
     remembered_memory = reply_remember(proposed_memory)
     before_memory = len(memories)
@@ -91,9 +90,9 @@ def on_thinking(
         return RobotEvent.REPLY_READY, text, remaining_memories
     
     ## search_targetは、元の関数より戻り値が None になることはない。ゆえに絶対に検索にしかならない。
-    elif search_target is not None: 
-        search_target = catch_up_query_to_request(request)
-        text = reply_to_search_memory(memories, search_target)
+    elif search_target is not None:
+        keyword = extract_search_keywords(search_target)
+        text = reply_to_search_memory(memories, keyword)
     
     elif remembered_memory is not None:
         memories = add_memory(memories, remembered_memory)
