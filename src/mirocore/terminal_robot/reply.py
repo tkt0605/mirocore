@@ -88,9 +88,12 @@ def reply_to_self_introduction(is_new: bool) -> str | None:
 ## 出力：検索対象のデータ
 
 def search_memory(memories: list[str], keywords: list[str]) -> list[str]:
+    # keywords = [
+    #     keyword for keyword in keywords if keyword != ""
+    # ]
+    keywords = list(filter(lambda keyword: keyword != "", keywords))
     if not keywords:
         return []
-    
     results: list[str] = []
 
     for memory in memories:
