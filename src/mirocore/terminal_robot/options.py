@@ -82,7 +82,11 @@ def on_thinking(
     before_memory = len(memories)
 
     if delete_request is not None:
-        remaining_memories = on_delete(memories, request, user_name)
+        keywords = extract_search_keywords(delete_request)
+        ## search_resultsは、関数の戻り値の値の方から、list型を常に返す。
+        search_results = search_memory(memories, keywords)
+        ## on_deleteは、引数であるqueryもstr型を求めているのに、ここでは、list型のsearch_resultsを渡している。
+        remaining_memories = on_delete(memories, search_results, user_name)
         if len(remaining_memories) < before_memory:
             text = f"{delete_request}を削除しました。"
         else:
@@ -131,14 +135,24 @@ def on_delete_memory(state: RobotState, user_name: str) -> RobotEvent:
 # 記憶の削除
 # 入力：記憶内容、ユーザー名
 # 出力：検索対象のデータ
-def on_delete(memories: list[str], query:str, user_name: str) -> list[str]:
-    remaining = delete_memory(memories, query)
+def on_delete(memories: list[str], queries:list[str], user_name: str) -> list[str]:
+    # remaining = delete_memory(memories, queries)
     
-    before_counter = len(memories)
-    after_counter = len(remaining)
+    # before_counter = len(memories)
+    # after_counter = len(remaining)
 
-    if after_counter < before_counter:
-        specific_delete_user_local_json(user_name, remaining)
+    # if after_counter < before_counter:
+    #     specific_delete_user_local_json(user_name, remaining)
+    # return remaining
+
+    if not queries:
+        return memories
+    
+    for query in queries:
+        remaining = delete_memory(memories, query)
+        if remaining == memories:
+            continue
+    specific_delete_user_local_json(user_name, remaining)
     return remaining
     
 # <ユーザー名>_memories.jsonというファイルを作成
