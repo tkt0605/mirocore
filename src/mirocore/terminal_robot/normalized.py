@@ -51,6 +51,15 @@ _DELETE_SUFFIX = re.compile(
     r"|は(?:達成済み|達成ずみ|達成した|達成済|達成完了|完了した|終了した))$"
 )
 
+## 正規化前の共通の下処理
+def normalize_preserving_spaces(text: str) -> str:
+    """表記を揃え、指定した句読点を除く。内部の空白は残す。"""
+    normalized = unicodedata.normalize("NFKC", text.strip()).casefold()
+
+    for mark in _PUNCTUATION:
+        normalized = normalized.replace(mark, "")
+    return normalized.strip()
+
 def normalize(text: str) -> str:
     """
         表記の違いを吸収した比較用の文字列を返す。
@@ -69,17 +78,17 @@ def _extract_target(request: str, suffix: re.Pattern[str]) -> str | None:
     """
         正規化し、先頭の「僕の」とコマンドの語尾を取り除き、残りが空ならNoneを返す。
     """
-    text = normalize(request)
+    ## ここで、空白区切りにするのが理想。
+    text = normalize_preserving_spaces(request)
     for prefix in sorted(_SPEAKER_PREFIXES, key=len, reverse=True):
         if text.startswith(prefix):
             text = text.removeprefix(prefix)
             break
     if suffix.search(text) is None:
         return None
-    target = suffix.sub("", text, count=1)
-    if target == "":
-        return None
-    return target
+    target = suffix.sub("", text, count=1).strip()
+
+    return target if target else None
 
 def extract_query(request: str) -> str | None:
     """
@@ -87,6 +96,7 @@ def extract_query(request: str) -> str | None:
     """
     return _extract_target(request, _QUERY_SUFFIX)
 
+## 削除用と検索のようには、 _extract_targetの仕様を分ける。
 def extract_delete_target(request: str) -> str | None:
     """
         削除コマンドから、削除対象を取り出す。
