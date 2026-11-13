@@ -44,6 +44,7 @@ _SPEAKER_PREFIXES: tuple[str, ...] = (
     "あなたの",
 )
 _QUERY_SUFFIX = re.compile(
+    r"(?:について|を)?\s*"
     r"(?:について|を)?(?:覚えて(?:る|いる|ます|います)か?|教えて(?:ください)?)$"
 )
 _DELETE_SUFFIX = re.compile(
