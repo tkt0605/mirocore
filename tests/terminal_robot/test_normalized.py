@@ -14,6 +14,9 @@ from mirocore.terminal_robot.reply import search_memory
         ("A B Cを教えてください", "a b c"),
         ("教えて", None),
         ("こんにちは", None),
+        ("面談について　教えて", "面談"),
+        ("明日 面談を教えて", "明日 面談"),
+        ("明日　面談　を　教えて", "明日 面談"),
     ]
 )
 def test_extract_query(utterance: str, expected: str | None) -> None:
@@ -74,8 +77,8 @@ def test_search_memory_normalizes_both_sides() -> None:
         "猫",
         "犬",
     ]
-    assert search_memory(memories, "abc") == ["ＡＢＣが好き。"]
+    assert search_memory(memories, ["abc"]) == ["ＡＢＣが好き。"]
     assert search_memory(memories, keywords) == ["犬が好き、猫も好き",]
-    assert search_memory(memories, "") == []
-    assert search_memory(memories, "!!!") == []
+    assert search_memory(memories, [""]) == []
+    assert search_memory(memories, ["!!!"]) == []
 
