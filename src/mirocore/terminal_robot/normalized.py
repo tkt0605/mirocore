@@ -112,20 +112,35 @@ def delete_memory(memories: list[str], query: str) -> list[str]:
         queryが空、削除コマンドでない、対象が空の場合は、memoriesをそのまま返す。
         比較前に記憶がわもnormalizeされていることを期待する。
     """
-    target = extract_delete_target(query)
-    if target is None:
-        return memories
+
+    ## ここで、quries内の文をmemories内の文と比較して、削除対象を含む文を削除する。
     remaining = [
         memory for memory in memories
-        if target not in normalize(memory)
+        # 正規化したmemoryとqueryが含まれていなければ、リストに追加する。
+        if normalize(query) not in normalize(memory)
     ]
-    before_counter = len(memories)
-    after_counter = len(remaining)
 
-    if after_counter == before_counter:
+    before_length = len(memories)
+    after_length = len(remaining)
+
+    if after_length == before_length:
         return memories
-    
     return remaining
+
+    # target = extract_delete_target(query)
+    # if target is None:
+    #     return memories
+    # remaining = [
+    #     memory for memory in memories
+    #     if target not in normalize(memory)
+    # ]
+    # before_counter = len(memories)
+    # after_counter = len(remaining)
+
+    # if after_counter == before_counter:
+    #     return memories
+    
+    # return remaining
 
 def extract_search_keywords(text: str) -> list[str]:
     """
