@@ -54,15 +54,13 @@ def on_listening(state: RobotState, user_name: str) -> tuple[RobotEvent,str]:
 
 def reply_to_search_memory(
     memories: list[str],
-    query: str
+    keywords: list[str]
 ) -> str | None:
-    search_results = search_memory(memories, query)
-    result_counter = len(search_results)
-    if result_counter == 0:
+    search_results = search_memory(memories, keywords)
+
+    if not search_results:
         return "検索結果がありません。"
-    else:
-        body = "\n".join(search_results)
-        return f"{body}"
+    return "\n".join(search_results)
 
 def request_to_search(request: str) -> bool:
     return extract_query(request) is not None
@@ -77,11 +75,13 @@ def on_thinking(
     memories: list[str]
 ) -> tuple[RobotEvent, str, list[str]]:
     face = add_prefix(False, state)
+    
     delete_request = extract_delete_target(request)
+    search_target = extract_search_keywords(request)
     proposed_memory = propose_memory(request)
     remembered_memory = reply_remember(proposed_memory)
-    search_request = request_to_search(request)
     before_memory = len(memories)
+
     if delete_request is not None:
         remaining_memories = on_delete(memories, request, user_name)
         if len(remaining_memories) < before_memory:
@@ -89,15 +89,18 @@ def on_thinking(
         else:
             text = f"{delete_request}は見つかりませんでした。"
         return RobotEvent.REPLY_READY, text, remaining_memories
-    elif search_request is True:
+    
+    ## search_targetは、元の関数より戻り値が None になることはない。ゆえに絶対に検索にしかならない。
+    elif search_target is not None: 
         search_target = catch_up_query_to_request(request)
         text = reply_to_search_memory(memories, search_target)
+    
     elif remembered_memory is not None:
         memories = add_memory(memories, remembered_memory)
         after_memory = len(memories)
         added_memory = after_memory - before_memory
         text = reply_to_self_introduction(added_memory > 0)
-    elif remembered_memory is None:
+    else:
         text = reply_to_greeting(request, user_name)
     json_data: dict[str, str |list[str]] = {
         "name": user_name,

@@ -1,3 +1,4 @@
+from unittest import result
 from mirocore.terminal_robot.normalized import (
     normalize,
     _REPLY_KEYWORDS_INDEX,
@@ -86,16 +87,14 @@ def reply_to_self_introduction(is_new: bool) -> str | None:
 ## 入力：記憶内容、ユーザー名
 ## 出力：検索対象のデータ
 
-def search_memory(memories: list[str], query: str) -> list[str]:
-    if not query:
+def search_memory(memories: list[str], keywords: list[str]) -> list[str]:
+    if not keywords:
         return []
     
-    normalized_query = normalize(query)
+    results: list[str] = []
 
-    if normalized_query == "":
-        return []
-    
-    return [
-        memory for memory in memories
-        if normalized_query in normalize(memory)
-    ]
+    for memory in memories:
+        normalized_memory = normalize(memory)
+        if all(keyword in normalized_memory for keyword in keywords):
+            results.append(memory)
+    return results
