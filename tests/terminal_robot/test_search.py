@@ -1,5 +1,9 @@
 import pytest
-from mirocore.terminal_robot.search import extract_query, search_memory
+from mirocore.terminal_robot.search import (
+    extract_query, 
+    search_memory,
+    extract_search_keywords
+)
 
 @pytest.mark.parametrize(
     ("utterance", "expected"),
@@ -32,3 +36,18 @@ def test_search_memory_normalizes_both_sides() -> None:
     assert search_memory(memories, keywords) == ["犬が好き、猫も好き",]
     assert search_memory(memories, [""]) == []
     assert search_memory(memories, ["!!!"]) == []
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("明日 面談", ["明日", "面談"]),
+        ("明日　面談", ["明日", "面談"]),
+        ("犬が好き", ["犬が好き"]),
+        ("猫が好き", ["猫が好き"]),
+        ("犬が好き、猫も好き", ["犬が好き猫も好き"]),
+        ("", []),
+    ]
+)
+def test_extract_search_keywords(text: str, expected: list[str]) -> None:
+    assert extract_search_keywords(text) == expected
