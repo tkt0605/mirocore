@@ -11,14 +11,16 @@ from mirocore.terminal_robot.reply import (
  propose_memory,
  add_memory,
  reply_to_self_introduction,
- search_memory,
 )
 from mirocore.terminal_robot.normalized import (
     delete_memory,
-    normalize,
-    extract_query,
     extract_delete_target,
+)
+from mirocore.terminal_robot.search import (
+    extract_query,
     extract_search_keywords,
+    reply_to_search_memory,
+    search_memory,
 )
 from mirocore.terminal_robot.write_read import (
     specific_delete_user_local_json,
@@ -52,19 +54,6 @@ def on_listening(state: RobotState, user_name: str) -> tuple[RobotEvent,str]:
     if request.strip() == "":
         return RobotEvent.EMPTY_INPUT, ""
     return RobotEvent.CONFIRM_INPUT, request
-
-def reply_to_search_memory(
-    memories: list[str],
-    keywords: list[str]
-) -> str | None:
-    search_results = search_memory(memories, keywords)
-
-    if not search_results:
-        return "検索結果がありません。"
-    return "\n".join(search_results)
-
-def catch_up_query_to_request(request: str) -> str | None:
-    return extract_query(request)
 
 def on_thinking(
     state: RobotState,
