@@ -147,7 +147,7 @@ def on_delete(memories: list[str], queries:list[str], user_name: str) -> list[st
 
     if not queries:
         return memories
-    
+        
     for query in queries:
         remaining = delete_memory(memories, query)
         if remaining == memories:

@@ -112,7 +112,8 @@ def delete_memory(memories: list[str], query: str) -> list[str]:
         queryが空、削除コマンドでない、対象が空の場合は、memoriesをそのまま返す。
         比較前に記憶がわもnormalizeされていることを期待する。
     """
-
+    if not query:
+        return memories
     ## ここで、quries内の文をmemories内の文と比較して、削除対象を含む文を削除する。
     remaining = [
         memory for memory in memories
