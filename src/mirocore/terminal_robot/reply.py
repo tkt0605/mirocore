@@ -82,22 +82,3 @@ def reply_to_self_introduction(is_new: bool) -> str | None:
     if is_new:
         return "覚えておくね。"
     return "それは前に聞いたよ。"
-
-## 記憶の選定
-## 入力：記憶内容、ユーザー名
-## 出力：検索対象のデータ
-
-def search_memory(memories: list[str], keywords: list[str]) -> list[str]:
-    # keywords = [
-    #     keyword for keyword in keywords if keyword != ""
-    # ]
-    keywords = list(filter(lambda keyword: keyword != "", keywords))
-    if not keywords:
-        return []
-    results: list[str] = []
-
-    for memory in memories:
-        normalized_memory = normalize(memory)
-        if all(keyword in normalized_memory for keyword in keywords):
-            results.append(memory)
-    return results
