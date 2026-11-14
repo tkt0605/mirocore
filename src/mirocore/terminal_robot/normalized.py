@@ -43,10 +43,6 @@ _SPEAKER_PREFIXES: tuple[str, ...] = (
     "私の",
     "あなたの",
 )
-_QUERY_SUFFIX = re.compile(
-    r"(?:について|を)?\s*"
-    r"(?:について|を)?(?:覚えて(?:る|いる|ます|います)か?|教えて(?:ください)?)$"
-)
 _DELETE_SUFFIX = re.compile(
     r"(?:は|を)?\s*"
     r"(?:(?:を|は)?(?:削除|消去|消)して(?:ください)?"
@@ -92,13 +88,6 @@ def _extract_target(request: str, suffix: re.Pattern[str]) -> str | None:
 
     return target if target else None
 
-def extract_query(request: str) -> str | None:
-    """
-    質問コマンドから、検索対象を取り出す。対象がなければ、Noneを返す。
-    """
-    return _extract_target(request, _QUERY_SUFFIX)
-
-## 削除用と検索のようには、 _extract_targetの仕様を分ける。
 def extract_delete_target(request: str) -> str | None:
     """
         削除コマンドから、削除対象を取り出す。
@@ -142,21 +131,3 @@ def delete_memory(memories: list[str], query: str) -> list[str]:
     #     return memories
     
     # return remaining
-
-def extract_search_keywords(text: str) -> list[str]:
-    """
-        検索用の正規化を行い、対象を取り出す。
-        検索用の正規化を行い、対象を取り出す。
-        queryが空、対象がない場合は、空リストを返す。
-    """
-    search_lists: list[str] = []
-    keywords = text.split()
-    
-    for keyword in keywords:
-        normalized = normalize(keyword)
-    
-        if normalized == "":
-            continue
-    
-        search_lists.append(normalized)
-    return search_lists
