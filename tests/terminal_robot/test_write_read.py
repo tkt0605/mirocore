@@ -1,10 +1,13 @@
 from email.policy import default
 import os
+
+from _pytest._py.path import local
 from mirocore.config import get_memory_index_dir
 from mirocore.terminal_robot.write_read import (
     local_memory_path,
     write_user_local_json,
-    read_user_local_json
+    read_user_local_json,
+    specific_delete_user_local_json
 )
 from pathlib import Path
 import pytest
@@ -234,3 +237,40 @@ def test_write_user_local_json_invalid_key(monkeypatch: MonkeyPatch, tmp_path: P
         }
         write_user_local_json(user_name, invalid_data)
     assert read_user_local_json(user_name) == default_data
+
+def test_specific_delete_user_local_json(
+    monkeypatch: MonkeyPatch,
+    tmp_path: Path
+) -> None:
+
+    # テスト実行中の環境変数 MEMORY_INDEX_DIR を、テスト用の一時フォルダのパスに設定します。
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
+    # ユーザー名を設定します。
+    user_name = "test"
+    # 設定した保存先から、次の親フォルダを取得して作成します。
+    local_memory_path(user_name).parent.mkdir(parents=True)
+
+    # デフォルトのデータを作成します。
+    default = {
+        "name": user_name,
+        "memories": [
+            "僕は、テストです。",
+            "私もテストです。",
+            "おはよう",
+        ]
+    }
+    write_user_local_json(user_name, default)
+    deleted_datas = [
+        "僕は、テストです。",
+        "私もテストです。",
+    ]
+    specific_delete_user_local_json(user_name, deleted_datas)
+
+    expected_data = {
+        "name": user_name,
+        "memories": [
+            "僕は、テストです。",
+            "私もテストです。",
+        ]
+    }
+    assert read_user_local_json(user_name) == expected_data
