@@ -1,8 +1,13 @@
+from email.policy import default
+from threading import local
+from mirocore.terminal_robot.search import extract_search_keywords, search_memory
 from mirocore.terminal_robot.write_read import (
     local_memory_path,
     read_user_local_json,
+    write_user_local_json,
 )
 from mirocore.terminal_robot.options import (
+    on_delete,
     terminal_robot_state,
     on_listening,
     on_thinking,
@@ -183,6 +188,52 @@ def test_create_json_folder(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     assert local_memory_path(user_name).parent.exists()
 
 
-def test_on_delete() -> None:
-    # user_name = "test"
-    pass
+@pytest.mark.parametrize(
+    ("default_memories", "search_keywords", "delete_queries", "expected_memories"),
+    [
+        (
+            [
+                "僕の学校では、明日に期末テストです。",
+                "私の期末テストは、来週です。",
+                "犬です。わんわん",
+                "おはよう",
+            ],
+            ["明日", "期末"],
+            [
+                "僕の学校では、明日に期末テストです。",
+            ],
+            [
+                "私の期末テストは、来週です。",
+                "犬です。わんわん",
+                "おはよう",
+            ],
+        )
+    ]
+)
+def test_on_delete(
+    default_memories: list[str],
+    search_keywords: list[str],
+    delete_queries: list[str],
+    expected_memories: list[str],
+    monkeypatch: MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
+    user_name = "test"
+    local_memory_path(user_name).parent.mkdir(parents=True, exist_ok=True)
+    default_data = {
+        "name": user_name,
+        "memories": default_memories
+    }
+    write_user_local_json(user_name, default_data)
+
+    search_results = search_memory(default_memories, search_keywords)
+    assert search_results == delete_queries
+    on_delete(default_memories, delete_queries, user_name)
+
+    expected_data = {
+        "name": user_name,
+        "memories": expected_memories
+    }
+
+    assert read_user_local_json(user_name) == expected_data
