@@ -182,5 +182,7 @@ def test_create_json_folder(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
 
     assert local_memory_path(user_name).parent.exists()
 
+
 def test_on_delete() -> None:
+    # user_name = "test"
     pass
