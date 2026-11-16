@@ -166,7 +166,7 @@ def on_selected_data(candidate_queries: list[str]) -> list[str]:
             if selected_index < 1 or selected_index > len(candidate_queries):
                 print("無効な番号です。")
                 continue
-            selected_query = candidate_queries[selected_index - 1]
+            selected_query = [candidate_queries[selected_index - 1]]
             return selected_query
         except EOFError:
             print("\n終了します。")
