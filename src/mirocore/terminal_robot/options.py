@@ -1,6 +1,7 @@
 from doctest import FAIL_FAST
 from re import search
 from tkinter import NO
+from traceback import print_tb
 from types import NoneType
 from mirocore.terminal_robot.state import RobotEvent, RobotState, transition
 from mirocore.terminal_robot.expressive import add_prefix
@@ -75,11 +76,20 @@ def on_thinking(
         ## search_resultsは、関数の戻り値の値の方から、list型を常に返す。
         search_results = search_memory(memories, keywords)
         ## on_deleteは、引数であるqueryもstr型を求めているのに、ここでは、list型のsearch_resultsを渡している。
-        remaining_memories = on_delete(memories, search_results, user_name)
-        if len(remaining_memories) < before_memory:
-            text = f"{delete_request}を削除しました。"
+        if len(search_results) > 1:
+            ## 削除対象の記憶が複数存在する時に発火する。
+            selected_query = on_selected_data(search_results)
+            remaining_memories = on_delete(memories, selected_query, user_name)
+            if len(remaining_memories) < before_memory:
+                text = f"{delete_request}を削除しました。"
+            else:
+                text = f"{delete_request}は見つかりませんでした。"
         else:
-            text = f"{delete_request}は見つかりませんでした。"
+            remaining_memories = on_delete(memories, search_results, user_name)
+            if len(remaining_memories) < before_memory:
+                text = f"{delete_request}を削除しました。"
+            else:
+                text = f"{delete_request}は見つかりませんでした。"
         return RobotEvent.REPLY_READY, text, remaining_memories
     
     ## search_targetは、元の関数より戻り値が None になることはない。ゆえに絶対に検索にしかならない。
@@ -144,6 +154,27 @@ def on_delete(memories: list[str], queries:list[str], user_name: str) -> list[st
     specific_delete_user_local_json(user_name, remaining)
     return remaining
     
+# 削除対象の記憶が複数存在する時に発火する。
+def on_selected_data(candidate_queries: list[str]) -> list[str]:
+    while True:
+        try:
+            print("削除対象の記憶が複数存在します。")
+            print("以下の中から、削除する記憶を選択してください。")
+            for index, query in enumerate(candidate_queries):
+                print(f"{ index + 1}. {query}")
+            selected_index = int(input("削除する記憶の番号を入力してください: "))
+            if selected_index < 1 or selected_index > len(candidate_queries):
+                print("無効な番号です。")
+                continue
+            selected_query = candidate_queries[selected_index - 1]
+            return selected_query
+        except EOFError:
+            print("\n終了します。")
+            raise KeyboardInterrupt
+        except ValueError as value_error:
+            print(f"無効な入力です: {value_error}")
+            continue
+
 # <ユーザー名>_memories.jsonというファイルを作成
 # 以上のファイルがない時は、この関数を読み出して、ファイルを作らせる。
 # ファイルがある時は、そのファイルを読み出して、ユーザー名を返す。
