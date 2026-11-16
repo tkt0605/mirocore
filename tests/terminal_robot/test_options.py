@@ -1,5 +1,6 @@
 from email.policy import default
 from threading import local
+# from pytest import MonkeyPatch
 from mirocore.terminal_robot.search import extract_search_keywords, search_memory
 from mirocore.terminal_robot.write_read import (
     local_memory_path,
@@ -11,7 +12,8 @@ from mirocore.terminal_robot.options import (
     terminal_robot_state,
     on_listening,
     on_thinking,
-    create_json_folder
+    create_json_folder,
+    on_selected_data
 )
 from mirocore.terminal_robot.state import (
     RobotEvent,
@@ -237,3 +239,54 @@ def test_on_delete(
     }
 
     assert read_user_local_json(user_name) == expected_data
+
+### 元の記憶、削除対象、出力の期待値
+@pytest.mark.parametrize(
+    ("default_data", "keywords", "delete_queries", "expected_data"),
+    [
+        (
+            {
+                "name": "test",
+                "memories": [
+                    "僕の学校では、明日に期末テストです。",
+                    "私の期末テストは、来週です。",
+                    "犬です。わんわん",
+                    "おはよう",
+                ]
+            },
+            ["期末", "テスト"],
+            ["僕の学校では、明日に期末テストです。", "私の期末テストは、来週です。"],
+            {
+                "name": "test",
+                "memories": [
+                    "犬です。わんわん",
+                    "おはよう",
+                ]
+            }
+        )
+    ]
+)
+## 似た記憶2件の中から、１件のみを選択して、消すテスト
+def test_selected_memories(
+    monkeypatch: MonkeyPatch, 
+    tmp_path: Path,
+    default_data: dict[str, list[str]],
+    keywords: list[str],
+    delete_queries: list[str],
+    expected_data: dict[str, list[str]],
+) -> None :
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
+    user_name = "test"
+    local_memory_path(user_name).parent.mkdir(parents=True, exist_ok=True)
+
+    write_user_local_json(user_name, default_data)
+
+    search_results = search_memory(default_data["memories"], keywords)
+    assert search_results == delete_queries
+
+    delete_target = ["僕の学校では、明日に期末テストです。"]
+    selected_query = on_selected_data(delete_target)
+
+    with pytest.raises(KeyboardInterrupt):
+        on_selected_data(search_results)
+   
