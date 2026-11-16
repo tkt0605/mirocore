@@ -284,9 +284,10 @@ def test_selected_memories(
     search_results = search_memory(default_data["memories"], keywords)
     assert search_results == delete_queries
 
-    delete_target = ["僕の学校では、明日に期末テストです。"]
-    selected_query = on_selected_data(delete_target)
 
+    with pytest.raises(EOFError):
+        pass
     with pytest.raises(KeyboardInterrupt):
-        on_selected_data(search_results)
-   
+        pass
+    with pytest.raises(ValueError):
+        pass
