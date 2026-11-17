@@ -241,58 +241,63 @@ def test_on_delete(
     assert read_user_local_json(user_name) == expected_data
 
 ### 元の記憶、削除対象、出力の期待値
-# @pytest.mark.parametrize(
-#     ("default_data", "keywords", "delete_queries", "expected_data"),
-#     [
-#         (
-#             {
-#                 "name": "test",
-#                 "memories": [
-#                     "僕の学校では、明日に期末テストです。",
-#                     "私の期末テストは、来週です。",
-#                     "犬です。わんわん",
-#                     "おはよう",
-#                 ]
-#             },
-#             ["期末", "テスト"],
-#             ["僕の学校では、明日に期末テストです。", "私の期末テストは、来週です。"],
-#             {
-#                 "name": "test",
-#                 "memories": [
-#                     "犬です。わんわん",
-#                     "おはよう",
-#                 ]
-#             }
-#         )
-#     ]
-# )
-## 似た記憶2件の中から、１件のみを選択して、消すテスト
-# """
-# 今は、メインの機能の構築を最優先事項に据えている。
-# 故に、このテストコードは、ひとまずコメントアウトしておく。
-# """
+@pytest.mark.parametrize(
+    ("default_data", "keywords", "delete_queries", "expected_data"),
+    [
+        (
+            {
+                "name": "test",
+                "memories": [
+                    "僕は、期末テストです",
+                    "僕は、期末テストです。明日は数学です。",
+                    "僕は、猫が好きです。"
+                ]
+            },
+            ["期末", "テスト"],
+            [
+                "僕は、期末テストです",
+                "僕は、期末テストです。明日は数学です。",
+            ],
+            {
+                "name": "test",
+                "memories": [
+                    "僕は、期末テストです。明日は数学です。",
+                    "僕は、猫が好きです。"
+                ]
+            }
+        )
+    ]
+)
+# 似た記憶2件の中から、１件のみを選択して、消すテスト
+def test_selected_memories(
+    monkeypatch: MonkeyPatch, 
+    tmp_path: Path,
+    default_data: dict[str, str | list[str]],
+    keywords: list[str],
+    delete_queries: list[str],
+    expected_data: dict[str, str | list[str]],
+) -> None :
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
+    user_name = "test"
+    local_memory_path(user_name).parent.mkdir(parents=True, exist_ok=True)
 
-# def test_selected_memories(
-#     monkeypatch: MonkeyPatch, 
-#     tmp_path: Path,
-#     default_data: dict[str, list[str]],
-#     keywords: list[str],
-#     delete_queries: list[str],
-#     expected_data: dict[str, list[str]],
-# ) -> None :
-#     monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
-#     user_name = "test"
-#     local_memory_path(user_name).parent.mkdir(parents=True, exist_ok=True)
+    write_user_local_json(user_name, default_data)
 
-#     write_user_local_json(user_name, default_data)
+    search_results = search_memory(default_data["memories"], keywords)
 
-#     search_results = search_memory(default_data["memories"], keywords)
-#     assert search_results == delete_queries
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: "1"
+    )
 
+    assert search_results == delete_queries
 
-#     with pytest.raises(EOFError):
-#         pass
-#     with pytest.raises(KeyboardInterrupt):
-#         pass
-#     with pytest.raises(ValueError):
-#         pass
+    selected_query = on_selected_data(search_results)
+    remaining_memories = on_delete(
+        default_data["memories"],
+        selected_query,
+        user_name
+    )
+    assert remaining_memories == expected_data["memories"]
+
+    assert read_user_local_json(user_name) == expected_data
