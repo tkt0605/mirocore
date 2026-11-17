@@ -241,31 +241,31 @@ def test_on_delete(
     assert read_user_local_json(user_name) == expected_data
 
 ### 元の記憶、削除対象、出力の期待値
-@pytest.mark.parametrize(
-    ("default_data", "keywords", "delete_queries", "expected_data"),
-    [
-        (
-            {
-                "name": "test",
-                "memories": [
-                    "僕の学校では、明日に期末テストです。",
-                    "私の期末テストは、来週です。",
-                    "犬です。わんわん",
-                    "おはよう",
-                ]
-            },
-            ["期末", "テスト"],
-            ["僕の学校では、明日に期末テストです。", "私の期末テストは、来週です。"],
-            {
-                "name": "test",
-                "memories": [
-                    "犬です。わんわん",
-                    "おはよう",
-                ]
-            }
-        )
-    ]
-)
+# @pytest.mark.parametrize(
+#     ("default_data", "keywords", "delete_queries", "expected_data"),
+#     [
+#         (
+#             {
+#                 "name": "test",
+#                 "memories": [
+#                     "僕の学校では、明日に期末テストです。",
+#                     "私の期末テストは、来週です。",
+#                     "犬です。わんわん",
+#                     "おはよう",
+#                 ]
+#             },
+#             ["期末", "テスト"],
+#             ["僕の学校では、明日に期末テストです。", "私の期末テストは、来週です。"],
+#             {
+#                 "name": "test",
+#                 "memories": [
+#                     "犬です。わんわん",
+#                     "おはよう",
+#                 ]
+#             }
+#         )
+#     ]
+# )
 ## 似た記憶2件の中から、１件のみを選択して、消すテスト
 # """
 # 今は、メインの機能の構築を最優先事項に据えている。
