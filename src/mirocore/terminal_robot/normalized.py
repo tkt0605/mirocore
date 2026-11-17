@@ -107,7 +107,7 @@ def delete_memory(memories: list[str], query: str) -> list[str]:
     remaining = [
         memory for memory in memories
         # 正規化したmemoryとqueryが含まれていなければ、リストに追加する。
-        if normalize(query) not in normalize(memory)
+        if query != memory
     ]
 
     before_length = len(memories)
@@ -117,17 +117,3 @@ def delete_memory(memories: list[str], query: str) -> list[str]:
         return memories
     return remaining
 
-    # target = extract_delete_target(query)
-    # if target is None:
-    #     return memories
-    # remaining = [
-    #     memory for memory in memories
-    #     if target not in normalize(memory)
-    # ]
-    # before_counter = len(memories)
-    # after_counter = len(remaining)
-
-    # if after_counter == before_counter:
-    #     return memories
-    
-    # return remaining
