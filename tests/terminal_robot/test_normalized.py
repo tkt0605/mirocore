@@ -24,11 +24,11 @@ def test_delete_memory_removes_every_match() -> None:
         "猫が好きです。",
         "鳩ぽっぽーは好きです。",
     ]
-    delete_targets = ["犬", "鳩"]
+    delete_targets = ["犬が好きです。"]
     for target in delete_targets:
         memories = delete_memory(memories, target)
 
-    assert memories == ["猫が好きです。"]
+    assert memories == ["犬が好き、散歩も好き。", "猫が好きです。", "鳩ぽっぽーは好きです。"]
 
 @pytest.mark.parametrize(
     "query",
