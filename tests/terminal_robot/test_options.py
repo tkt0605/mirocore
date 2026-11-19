@@ -209,6 +209,20 @@ def test_create_json_folder(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
                 "犬です。わんわん",
                 "おはよう",
             ],
+        ),
+        (
+            [
+                "犬です。わんわん",
+                "おはよう",
+            ],
+            ["明日", "期末"],
+            [
+                
+            ],
+            [
+                "犬です。わんわん",
+                "おはよう",
+            ],
         )
     ]
 )
@@ -231,7 +245,7 @@ def test_on_delete(
 
     search_results = search_memory(default_memories, search_keywords)
     assert search_results == delete_queries
-    on_delete(default_memories, delete_queries, user_name)
+    remaining_memories = on_delete(default_memories, delete_queries, user_name)
 
     expected_data = {
         "name": user_name,
@@ -239,6 +253,7 @@ def test_on_delete(
     }
 
     assert read_user_local_json(user_name) == expected_data
+    assert remaining_memories == expected_memories
 
 ### 元の記憶、削除対象、出力の期待値
 @pytest.mark.parametrize(
