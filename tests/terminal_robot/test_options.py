@@ -1,5 +1,7 @@
 from email.policy import default
 from threading import local
+
+# from _pytest import monkeypatch
 # from pytest import MonkeyPatch
 from mirocore.terminal_robot.search import extract_search_keywords, search_memory
 from mirocore.terminal_robot.write_read import (
@@ -24,6 +26,7 @@ from pytest import MonkeyPatch
 from pathlib import Path
 import pytest
 import os
+from unittest.mock import Mock
 
 
 ## terminal_robot_stateのテスト条件追加
@@ -255,6 +258,32 @@ def test_on_delete(
     assert read_user_local_json(user_name) == expected_data
     assert remaining_memories == expected_memories
 
+def test_on_delete_no_changes_skip_save(
+    monkeypatch: MonkeyPatch,
+) -> None:
+    # デフォルトの記憶
+    memories = [
+        "犬です。わんわん",
+        "おはよう",
+    ]
+    # 削除対象
+    requests = [
+        "猫がスチねん！"
+    ]
+    # モック関数を設定
+    save_mock = Mock()
+
+    # 一時的に、specific_delete_user_local_jsonをモック関数にすり替え
+    monkeypatch.setattr(
+        "mirocore.terminal_robot.options.specific_delete_user_local_json",
+        save_mock
+    )
+    # 削除後の記憶
+    remaining = on_delete(memories, requests, "test")
+
+    assert remaining == memories
+    # モック関数が呼び出されないことを確認
+    save_mock.assert_not_called()
 
 def test_on_thinking_delete_no_matches(
     monkeypatch: MonkeyPatch,
