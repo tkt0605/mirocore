@@ -255,6 +255,38 @@ def test_on_delete(
     assert read_user_local_json(user_name) == expected_data
     assert remaining_memories == expected_memories
 
+
+def test_on_thinking_delete_no_matches(
+    monkeypatch: MonkeyPatch,
+    tmp_path: Path,
+
+) -> None:
+    monkeypatch.setenv("MEMORY_INDEX_DIR", str(tmp_path))
+    user_name = "test"
+    local_memory_path(user_name).parent.mkdir(parents=True)
+
+    request = "明日 期末を削除して"
+    default = {
+        "name": user_name,
+        "memories": ["犬です。わんわん", "おはよう"]
+    }
+
+    write_user_local_json(user_name, default)
+
+    event, text, memories = on_thinking(
+        RobotState.THINKING,
+        request,
+        user_name,
+        default["memories"]
+    )
+
+    assert event == RobotEvent.REPLY_READY
+    assert text == "明日 期末は見つかりませんでした。"
+    assert memories == default["memories"]
+    assert read_user_local_json(user_name) == default
+
+
+
 ### 元の記憶、削除対象、出力の期待値
 @pytest.mark.parametrize(
     ("default_data", "keywords", "delete_queries", "expected_data"),
