@@ -147,10 +147,11 @@ def on_delete(memories: list[str], queries:list[str], user_name: str) -> list[st
     if not queries:
         return memories
         
+    remaining = memories
     for query in queries:
-        remaining = delete_memory(memories, query)
-        if len(remaining) < len(memories):
-            specific_delete_user_local_json(user_name, remaining)
+        remaining = delete_memory(remaining, query)
+    if len(remaining) < len(memories):
+        specific_delete_user_local_json(user_name, remaining)
     return remaining
     
 # 削除対象の記憶が複数存在する時に発火する。
