@@ -285,6 +285,44 @@ def test_on_delete_no_changes_skip_save(
     # モック関数が呼び出されないことを確認
     save_mock.assert_not_called()
 
+@pytest.mark.parametrize(
+    ("default_memories", "delete_request", "expected_memories"),
+    [
+        (
+            [
+                "犬です。わんこそば",
+                "僕は駒田崇人です。",
+                "僕は、明日に期末テストを控えています。",
+                "僕は、明日の期末テストのやまは数学ですね。",
+                "私も期末テストは、明日です。",
+            ],
+            [
+                "僕は、明日に期末テストを控えています。",
+                "僕は、明日の期末テストのやまは数学ですね。",
+                "私も期末テストは、明日です。",
+            ],
+            [
+                "犬です。わんこそば",
+                "僕は駒田崇人です。",
+            ]
+        )
+    ]
+)
+def test_on_delete_multiple_targets_saves_final_result(
+    monkeypatch: MonkeyPatch,
+    default_memories: list[str],
+    delete_request: list[str],
+    expected_memories: list[str],
+) -> None:
+    save_mock = Mock()
+    monkeypatch.setattr(
+        "mirocore.terminal_robot.options.specific_delete_user_local_json",
+        save_mock
+    )
+    remaining = on_delete(default_memories, delete_request, "test")
+    assert remaining == expected_memories
+    save_mock.assert_called_once_with("test", remaining)
+
 def test_on_thinking_delete_no_matches(
     monkeypatch: MonkeyPatch,
     tmp_path: Path,
