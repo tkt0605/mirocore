@@ -29,17 +29,17 @@ const toggleSidebar = () => {
 </script>
 
 <template>
-  <section>
+  <aside>
     <button @click="toggleSidebar" type="button" aria-label="メニューを開く">Toggle Sidebar</button>
-  </section>
-  <Sidebar :is-open=isSidebarOpen @toggle-sidebar="toggleSidebar" />
+    <Sidebar :is-open=isSidebarOpen @toggle-sidebar="toggleSidebar" />
+  </aside>
   <main>
     <!-- Mirocの表情を表す。Canvasを載せる -->
-    <section>
+    <section class="expression-section">
       <h2>Mirocの表情</h2>
     </section>
     <!-- プロンプトバー設置　・・各自モードを選べるようにする。 -->
-    <section>
+    <section class="prompt-bar-section">
       <h2>プロンプトバー</h2>
     </section>
 
