@@ -1,6 +1,6 @@
 import os
 from fastapi import FastAPI
-from fastapi.middlware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,13 +12,13 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOW_ORIGINS,
-    allow_method=ALLOW_METHODS,
+    allow_methods=ALLOW_METHODS,
     allow_headers=ALLOW_HEADERS,
 )
 
 @app.get("/api/health")
 def delivery_health_check():
     return {
-        "satus": "ok",
+        "status": "ok",
         "message": "Hi, This is Miroc Core API."
     }
