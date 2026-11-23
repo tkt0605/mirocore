@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "fastapi[standard]>=0.165.0",
     "numpy>=2.5.4",
 ]
 
