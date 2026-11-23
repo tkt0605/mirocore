@@ -28,6 +28,11 @@ docker compose run --rm mirocore uv run pytest
 uv run pytest -v
 ```
 
+FastAPIの立ち上げコマンド
+```bash
+uv run uvicorn mirocore.api:app --app-dir src --reload
+```
+
 ## ヴィジョン
 MirocBotは、単なる便利な道具としてロボットを作るのではなく、人と長い時間を共にし、関係を築いていく存在を目指します。
 人間は、友人や家族との関係を、体験や経験を共有することによって構築します。

@@ -27,6 +27,10 @@ Local test command:
 ```bash
 uv run pytest -v
 ```
+Command to launch FastAPI:
+```bash
+uv run uvicorn mirocore.api:app --app-dir src --reload
+```
 
 ## Vision
 MirocBot is not built as a merely convenient tool. It aims to be a presence that spends a long time with people and builds a relationship with them.
