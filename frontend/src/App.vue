@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
 import { onMounted } from 'vue';
+import { RouterView, RouterLink, useRouter, useRoute } from 'vue-router';
 
 onMounted(async() => {
   try {
@@ -23,5 +23,5 @@ onMounted(async() => {
 </script>
 
 <template>
-  <HelloWorld />
+  <router-view />
 </template>
