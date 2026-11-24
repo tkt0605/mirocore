@@ -64,5 +64,30 @@ const toggleSidebar = () => {
 </template>
 
 <style scoped>
-
+.app-container{
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+}
+.sidebar-section {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  background-color: #f0f0f0;
+  z-index: 0;
+}
+main{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.expression-section{
+  flex: 1;
+  display: flex;
+  place-items: center;
+}
+.prompt-bar-section{
+  padding: 12px 16px 16px;
+}
 </style>
