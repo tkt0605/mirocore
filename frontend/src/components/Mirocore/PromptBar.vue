@@ -13,5 +13,45 @@
 </template>
 
 <style scoped>
+/* .prompt-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 512px;
+    padding: 8px 12px;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+} */
+.prompt-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 512px;
+  margin-inline: auto;
+  padding: 8px 12px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+}
 
-    </style>
+.prompt-bar input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+}
+
+.prompt-bar button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+</style>

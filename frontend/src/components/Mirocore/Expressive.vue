@@ -8,5 +8,15 @@
 </template>
 
 <style scoped>
+.expressive {
+  width: 100%;
+}
 
+#expressive-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+}
 </style>
