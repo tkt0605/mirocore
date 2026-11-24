@@ -33,7 +33,7 @@ const toggleSidebar = () => {
 
 <template>
   <div class="app-container">
-    <aside class="sidebar-section">
+    <aside class="sidebar-section" :class="{ 'is-open': isSidebarOpen }">
       <button @click="toggleSidebar" type="button" aria-label="メニューを開く" v-if="!isSidebarOpen">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-menu-app" viewBox="0 0 16 16">
           <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h2A1.5 1.5 0 0 1 5 1.5v2A1.5 1.5 0 0 1 3.5 5h-2A1.5 1.5 0 0 1 0 3.5zM1.5 1a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5zM0 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm1 3v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2zm14-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2zM2 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5"/>
@@ -48,11 +48,9 @@ const toggleSidebar = () => {
     </aside>
     <main>
       <!-- Mirocの表情を表す。Canvasを載せる -->
-      <section class="expression-section">
+      <section class="face-prompt-section">
         <Expressive />
-      </section>
-      <!-- プロンプトバー設置　・・各自モードを選べるようにする。 -->
-      <section class="prompt-bar-section">
+        <!-- プロンプトバー設置　・・各自モードを選べるようにする。 -->
         <PromptBar />
       </section>
     </main>
@@ -64,30 +62,50 @@ const toggleSidebar = () => {
 </template>
 
 <style scoped>
-.app-container{
+.app-container {
   display: flex;
-  flex-direction: column;
+  width: 100%;
   height: 100svh;
 }
+
 .sidebar-section {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  background-color: #f0f0f0;
-  z-index: 0;
+  position: relative;
+  flex: none;
+  width: 56px;
+  height: 100%;
+  z-index: 20;
 }
-main{
+.sidebar-section button{
+  position: absolute;
+  z-index: 1;
+}
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 0;
 }
-.expression-section{
-  flex: 1;
+
+.face-prompt-section {
   display: flex;
-  place-items: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 480px);
 }
-.prompt-bar-section{
+
+.prompt-bar-section {
+  flex: none;
   padding: 12px 16px 16px;
 }
 </style>
