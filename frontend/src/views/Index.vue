@@ -1,23 +1,22 @@
 <script setup lang="ts">
 import Expressive from '../components/Mirocore/Expressive.vue';
 import PromptBar from '../components/Mirocore/PromptBar.vue';
+import ModeSlecter from '../components/Mirocore/ModeSlecter.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const modes = [
-    { id: "memory_get", text: "引き出す" },
-    { id: "memory_read", text: "読み出す" },
-    { id: "memory_write", text: "書き込む" },
-    { id: "memory_delete", text: "消去する" },
-];
+const selected_mode = ref<string>('memory_get');
 
-const selectedMode = ref<(typeof modes)[number]['id']>('memory_get')
+const SelectedMode = (mode: string) => {
+    selected_mode.value = mode
+    console.log("選択されたモード：", selected_mode.value)
+}
 const submitPrompt = (text: string) => {
     router.push({
         name: 'output',
         query: {
-            mode: selectedMode.value,
+            mode: selected_mode.value,
             prompt: text,
         }
     })
@@ -31,20 +30,7 @@ const submitPrompt = (text: string) => {
             <Expressive />
             <PromptBar @submit-prompt="submitPrompt" />
         </section>
-        <div class="mode-select-belt">
-            <ul>
-                <li v-for="mode in modes" :key="mode.id">
-                    <button
-                        type="button"
-                        :aria-pressed="selectedMode === mode.id"
-                        @click="selectedMode = mode.id"
-                    >
-                        {{ mode.text }}
-                    </button>
-                </li>
-            </ul>
-        </div>
-
+        <ModeSlecter @submit-mode="SelectedMode" />
     </div>
 </template>
 
@@ -121,22 +107,4 @@ const submitPrompt = (text: string) => {
   max-width: none;
 }
 
-.mode-select-belt ul {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.mode-select-belt button {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  background: #fff;
-}
-
-.mode-select-belt button[aria-pressed="true"] {
-  background: #f0f0f0;
-}
 </style>
