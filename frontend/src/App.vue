@@ -109,7 +109,9 @@ main {
   padding: 12px 16px 16px;
 } */
 .screen-section {
+  flex: 1;
   width: 100%;
+  min-height: 0;
   display: flex;
   justify-content: center;
 }
