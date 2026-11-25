@@ -44,7 +44,7 @@ const selectedMode = ref<(typeof modes)[number]['id']>('memory_get')
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  width: min(100%, 600px);
+  width: min(100%, 800px);
 }
 
 .home-sections {
