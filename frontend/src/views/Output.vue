@@ -1,13 +1,39 @@
 <!-- 出力画面 -->
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import Expressive from '../components/Mirocore/Expressive.vue';
 import PromptBar from '../components/Mirocore/PromptBar.vue';
 
 
 const route = useRoute();
+const results = ref<string[]>([])
+
 const mode = route.query.mode
 const prompt = route.query.prompt
+
+const user = "takato"
+
+onMounted(async () => {
+    try{
+        if (mode !== "memory_get" || typeof prompt !== "string") {
+            return;
+        }
+        const params = new URLSearchParams({
+            user_name: user,
+            query: prompt,
+        })
+        const response = await fetch(`http://localhost:8000/api/memory/search?${params.toString()}`)
+        const data = await response.json()
+        if (!response.ok) {
+            throw new Error(data.detail || "Failed to fetch memory search results")
+        }
+        results.value = data.results
+    }catch(error){
+        console.error("Error fetching memory search results:", error)
+    }
+})
+
 </script>
 
 <template>
@@ -18,8 +44,9 @@ const prompt = route.query.prompt
         <section class="output-board">
             <!-- 出力表示ボード -->
             <div>
-                <p>{{ prompt }}</p>
-                <p>{{ mode }}</p>
+                <div v-for="result in results" :key="result">
+                    <p>{{ result }}</p>
+                </div>
             </div>
         </section>
         <section class="output-prompt-bar">
