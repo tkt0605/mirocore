@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import Expressive from '../components/Mirocore/Expressive.vue';
 import PromptBar from '../components/Mirocore/PromptBar.vue';
+import ModeSlecter from '../components/Mirocore/ModeSlecter.vue';
 
 
 const route = useRoute();
@@ -51,6 +52,9 @@ onMounted(async () => {
         </section>
         <section class="output-prompt-bar">
             <PromptBar/>
+            <div class="mode-select-belt">
+                <ModeSlecter/>
+            </div>
         </section>
     </div>
 </template>
@@ -108,4 +112,10 @@ onMounted(async () => {
   width: 100%;
   max-width: none;
 }
+
+.mode-select-belt {
+  width: 100%;
+  margin-top: 16px;
+}
+
 </style>
