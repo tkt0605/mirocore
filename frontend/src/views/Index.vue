@@ -49,7 +49,7 @@ const submitPrompt = (text: string) => {
 </template>
 
 <style scoped>
-.home-container {
+/* .home-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -86,6 +86,57 @@ const submitPrompt = (text: string) => {
 
 .mode-select-belt button[aria-pressed="true"] {
   background: #f0f0f0;
+} */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  box-sizing: border-box;
+  width: min(100%, 800px);
+  height: 100%;
+  padding: 32px 24px;
 }
 
+.home-sections,
+.mode-select-belt {
+  width: 100%;
+}
+
+.home-sections {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.home-sections :deep(#expressive-canvas) {
+  width: 100%;
+  height: 36svh;
+}
+
+.home-sections :deep(.prompt-bar) {
+  width: 100%;
+  max-width: none;
+}
+
+.mode-select-belt ul {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mode-select-belt button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.mode-select-belt button[aria-pressed="true"] {
+  background: #f0f0f0;
+}
 </style>
