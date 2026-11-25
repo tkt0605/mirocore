@@ -18,7 +18,8 @@ const prompt = route.query.prompt
         <section class="output-board">
             <!-- 出力表示ボード -->
             <div>
-
+                <p>{{ prompt }}</p>
+                <p>{{ mode }}</p>
             </div>
         </section>
         <section class="output-prompt-bar">
@@ -32,35 +33,52 @@ const prompt = route.query.prompt
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: min(100%, 480px);
+  box-sizing: border-box;
+  width: min(100%, 800px);
   height: 100%;
   min-height: 0;
+  padding: 32px 24px;
+}
+
+.output-expressive,
+.output-board,
+.output-prompt-bar {
+  width: 100%;
 }
 
 .output-expressive {
   flex: none;
+  margin-bottom: 16px;
+}
+
+.output-expressive :deep(#expressive-canvas) {
   width: 96px;
-  margin-top: 24px;
+  height: 96px;
+  margin-inline: auto;
 }
 
 .output-board {
   flex: 1;
-  width: 100%;
   min-height: 0;
   overflow-y: auto;
 }
 
 .output-board > div {
+  box-sizing: border-box;
   width: 100%;
-  height: auto;
-  margin: 12px;
-  padding: 12px;
+  min-height: 100%;
+  padding: 16px;
   border: 1px solid #ccc;
+  background: #f0f0f0;
 }
 
 .output-prompt-bar {
   flex: none;
+  margin-top: 16px;
+}
+
+.output-prompt-bar :deep(.prompt-bar) {
   width: 100%;
-  margin-bottom: 24px;
+  max-width: none;
 }
 </style>
