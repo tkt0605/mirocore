@@ -52,12 +52,12 @@ const toggleSidebar = () => {
         <Expressive />
         <!-- プロンプトバー設置　・・各自モードを選べるようにする。 -->
         <PromptBar />
+        <!-- 全ての画面を表示するためのルーター -->
+        <section class="screen-section">
+          <router-view />
+        </section>
       </section>
     </main>
-    <!-- 全ての画面を表示するためのルーター -->
-    <section class="screen-section">
-      <router-view />
-    </section>
   </div>
 </template>
 
