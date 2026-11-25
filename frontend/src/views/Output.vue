@@ -68,8 +68,8 @@ const prompt = route.query.prompt
   width: 100%;
   min-height: 100%;
   padding: 16px;
-  border: 1px solid #ccc;
-  background: #f0f0f0;
+  /* border: 1px solid #ccc; */
+  /* background: #f0f0f0; */
 }
 
 .output-prompt-bar {
