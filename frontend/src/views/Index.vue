@@ -2,7 +2,9 @@
 import Expressive from '../components/Mirocore/Expressive.vue';
 import PromptBar from '../components/Mirocore/PromptBar.vue';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const modes = [
     { id: "memory_get", text: "引き出す" },
     { id: "memory_read", text: "読み出す" },
@@ -11,13 +13,23 @@ const modes = [
 ];
 
 const selectedMode = ref<(typeof modes)[number]['id']>('memory_get')
+const submitPrompt = (text: string) => {
+    router.push({
+        name: 'output',
+        query: {
+            mode: selectedMode.value,
+            prompt: text,
+        }
+    })
+}
+
 </script>
 
 <template>
     <div class="home-container">
         <section class="home-sections">
             <Expressive />
-            <PromptBar />
+            <PromptBar @submit-prompt="submitPrompt" />
         </section>
         <div class="mode-select-belt">
             <ul>
