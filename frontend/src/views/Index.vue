@@ -15,12 +15,10 @@ const selectedMode = ref<(typeof modes)[number]['id']>('memory_get')
 
 <template>
     <div class="home-container">
-        <div>
-            <section class="home-sections">
-                <Expressive />
-                <PromptBar />
-            </section>
-        </div>
+        <section class="home-sections">
+            <Expressive />
+            <PromptBar />
+        </section>
         <div class="mode-select-belt">
             <ul>
                 <li v-for="mode in modes" :key="mode.id">
