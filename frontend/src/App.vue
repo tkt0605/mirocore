@@ -2,8 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { RouterView, RouterLink, useRouter, useRoute } from 'vue-router';
 import Sidebar from './components/AppDesign/Sidebar.vue';
-import Expressive from './components/Mirocore/Expressive.vue';
-import PromptBar from './components/Mirocore/PromptBar.vue';
+
 
 
 onMounted(async() => {
@@ -48,14 +47,15 @@ const toggleSidebar = () => {
     </aside>
     <main>
       <!-- Mirocの表情を表す。Canvasを載せる -->
-      <section class="face-prompt-section">
+      <!-- <section class="face-prompt-section">
         <Expressive />
-        <!-- プロンプトバー設置　・・各自モードを選べるようにする。 -->
         <PromptBar />
-        <!-- 全ての画面を表示するためのルーター -->
         <section class="screen-section">
           <router-view />
         </section>
+      </section> -->
+      <section class="screen-section">
+        <router-view />
       </section>
     </main>
   </div>
@@ -96,16 +96,22 @@ main {
   min-height: 0;
 }
 
-.face-prompt-section {
+/* .face-prompt-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
   width: min(100%, 480px);
-}
+} */
 
-.prompt-bar-section {
+/* .prompt-bar-section {
   flex: none;
   padding: 12px 16px 16px;
+} */
+.screen-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
+
 </style>
