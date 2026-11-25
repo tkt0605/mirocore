@@ -15,7 +15,7 @@
 #expressive-canvas {
   display: block;
   width: 100%;
-  height: 250px;
+  height: auto;
   background: #f0f0f0;
   border: 1px solid #ccc;
 }
