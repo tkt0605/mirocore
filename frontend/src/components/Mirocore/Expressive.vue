@@ -79,33 +79,10 @@ function drawFace(
   const mouthCurve = 18
 
   // 目の表示関数
-  drawEyes(
-    ctx,
-    centerX,
-    centerY,
-    eyeRadius,
-    eyeDistance,
-    eyeOffset,
-    "left"
-  )
-  drawEyes(
-    ctx,
-    centerX,
-    centerY,
-    eyeRadius,
-    eyeDistance,
-    eyeOffset,
-    "right"
-  )
+  drawEyes(ctx, centerX, centerY, eyeRadius, eyeDistance, eyeOffset, "left")
+  drawEyes(ctx, centerX, centerY, eyeRadius, eyeDistance, eyeOffset, "right")
   // 口の表示関数
-  drawMouth(
-    ctx,
-    centerX,
-    centerY,
-    mouthOffsetY,
-    mouthCurve,
-    mouthWidth
-  )
+  drawMouth(ctx, centerX, centerY, mouthOffsetY, mouthCurve, mouthWidth)
 }
 
 </script>
