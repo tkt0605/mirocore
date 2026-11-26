@@ -9,8 +9,10 @@ from mirocore.terminal_robot.search import (
     extract_search_keywords
 )
 from mirocore.terminal_robot.write_read import (
-    read_user_local_json
+    read_user_local_json,
+    write_user_local_json,
 )
+from mirocore.terminal_robot.reply import propose_memory
 
 load_dotenv()
 ALLOW_ORIGINS = os.getenv("CORS_ALLOW_ORIGINS").split(",")
@@ -48,5 +50,35 @@ def search_memory_api(user_name: str, query: str):
             "keywords": keywords,
             "results": results
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+@app.post("/api/memory/write")
+def write_memory_api(user_name:  str, text: str) -> dict[str, str | bool]:
+    # try:
+    #     data = read_user_local_json(user_name)
+    #     if data is None:
+    #         raise HTTPException(status_code=404, detail="記憶ファイルが存在しません。")
+    #     memories = data.get('memories', [])
+    #     ## memoriesはリストであることを確認
+    #     if not isinstance(memories, list):
+    #         raise HTTPException(status_code=500, detail="記憶データの形式が不正です。")
+    #     memories.append({
+    #         ""
+    #     })
+    try:
+        memory = propose_memory(text)
+        if memory is None:
+            return {
+                "saved": False,
+                "message": "保存する文ではありません。",
+            }
+        write_user_local_json(user_name, {"memories": memory})
+        return {
+            "saved": True,
+            "message": "記憶を追加しました。",
+            "memory": memory,
+        }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
