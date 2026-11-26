@@ -129,7 +129,7 @@ const deleteMemory = async(user: string, prompt: string): Promise<void> => {
         const response = await fetch(
             `http://localhost:8000/api/memory/delete?${params.toString()}`,
             {
-                method: "DELETE",
+                method: "delete",
                 headers: {
                     "Content-Type": "application/json",
                 }
