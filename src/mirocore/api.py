@@ -17,9 +17,15 @@ from mirocore.terminal_robot.write_read import (
 from mirocore.terminal_robot.reply import propose_memory
 
 load_dotenv()
-ALLOW_ORIGINS = os.getenv("CORS_ALLOW_ORIGINS").split(",")
-ALLOW_METHODS = os.getenv("CORS_ALLOW_METHODS").split(",")
-ALLOW_HEADERS = os.getenv("CORS_ALLOW_HEADERS").split(",")
+def split_csb(value: str | None) -> list[str]:
+    if value is None:
+        return []
+    return [
+        item.strip() for item in value.split(",") if item.strip()
+    ]
+ALLOW_ORIGINS = split_csb(os.getenv("CORS_ALLOW_ORIGINS"))
+ALLOW_METHODS = split_csb(os.getenv("CORS_ALLOW_METHODS"))
+ALLOW_HEADERS = split_csb(os.getenv("CORS_ALLOW_HEADERS"))
 
 app = FastAPI()
 app.add_middleware(
@@ -86,7 +92,7 @@ def write_memory_api(user_name:  str, text: str) -> dict[str, str | bool]:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 @app.get("/api/memory/read")
-def read_memory_api(user_name: str, text: str) -> list[str]:
+def read_memory_api(user_name: str, text: str) -> dict[str, list[str]]:
     try:
         data = read_user_local_json(user_name)
         if data is None:
@@ -101,8 +107,8 @@ def read_memory_api(user_name: str, text: str) -> list[str]:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
-@app.post("/api/memory/delete")
-def delete_memory_api(user_name: str, text: str) -> dict[str, str | bool]:
+@app.delete("/api/memory/delete")
+def delete_memory_api(user_name: str, text: str) -> dict[str, str |  list[str] | bool]:
     try:
         data = read_user_local_json(user_name)
         if data is None:
