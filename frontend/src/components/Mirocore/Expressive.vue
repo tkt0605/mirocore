@@ -24,7 +24,7 @@ onMounted(() => {
 
   // ctx.scale(dpr, dpr)
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-  drawFace(ctx, centerX, centerY) 
+  drawFace(ctx, centerX, centerY, 1)
 })
 
 function drawEyes(
@@ -35,12 +35,17 @@ function drawEyes(
   distance: number,
   offset: number,
   element: "left" | "right",
+  openness: number,
 ): void{
   ctx.beginPath()
+  // 縦半径は？
+  const radiusX = radius
+  const radiusY = Math.max(1, radius * openness)
+  // ellipse()を使って目を描画する
   if(element === "left"){
-    ctx.arc(x - distance, y + offset, radius, 0, Math.PI * 2)
+    ctx.ellipse(x - distance, y + offset, radiusX, radiusY, 0, 0, Math.PI * 2)
   }else{
-    ctx.arc(x + distance, y + offset, radius, 0, Math.PI * 2)
+    ctx.ellipse(x + distance, y + offset, radiusX, radiusY, 0, 0, Math.PI * 2)
   }
   ctx.fillStyle = '#232b2a'
   ctx.fill()
@@ -67,6 +72,7 @@ function drawFace(
   ctx: CanvasRenderingContext2D,
   centerX: number,
   centerY: number,
+  openness: number,
 ): void{
   // 目のパラメータ
   const eyeRadius = 16
@@ -79,8 +85,8 @@ function drawFace(
   const mouthCurve = 18
 
   // 目の表示関数
-  drawEyes(ctx, centerX, centerY, eyeRadius, eyeDistance, eyeOffset, "left")
-  drawEyes(ctx, centerX, centerY, eyeRadius, eyeDistance, eyeOffset, "right")
+  drawEyes(ctx, centerX, centerY, eyeRadius, eyeDistance, eyeOffset, "left", openness)
+  drawEyes(ctx, centerX, centerY, eyeRadius, eyeDistance, eyeOffset, "right", openness)
   // 口の表示関数
   drawMouth(ctx, centerX, centerY, mouthOffsetY, mouthCurve, mouthWidth)
 }
