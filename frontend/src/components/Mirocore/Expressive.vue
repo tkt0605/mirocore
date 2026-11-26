@@ -24,7 +24,8 @@ onMounted(() => {
 
   // ctx.scale(dpr, dpr)
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-  drawFace(ctx, centerX, centerY, 1)
+  // drawFace(ctx, centerX, centerY, 1)
+  MirocFaceAnimation(0, ctx, centerX, centerY, width, height)
 })
 
 function drawEyes(
@@ -91,14 +92,41 @@ function drawFace(
   drawMouth(ctx, centerX, centerY, mouthOffsetY, mouthCurve, mouthWidth)
 }
 
-function AnimateMirocFace(timestamp: number): void{
-  // 前の描写の削除
-
-  // opennessの計算・更新
-
-  // drawFace()を呼び出す
+function calculateOpenness(
+  timestamp: number
+): number{
+  const blinkInterval = 4000
+  const blinkDuration = 200
   
+  const phase = timestamp % blinkInterval
+  const blinkStart = blinkInterval - blinkDuration
+
+  if (phase < blinkStart){
+    return 1
+  }
+  const progress = (phase - blinkStart) / blinkDuration
+
+  return 1 - Math.sin(progress * Math.PI)
+}
+
+function MirocFaceAnimation(
+  timestamp: number,
+  ctx: CanvasRenderingContext2D,
+  centerX: number,
+  centerY: number,
+  width: number,
+  height: number,
+): void{
+  // 前の描写の削除
+  ctx.clearRect(0, 0, width, height)
+  // opennessの計算・更新
+  const newOpenness = calculateOpenness(timestamp)
+  // drawFace()を呼び出す
+  drawFace(ctx, centerX, centerY, newOpenness)
   // 次のフレームの呼び出し
+  requestAnimationFrame((timestamp) =>{
+    MirocFaceAnimation(timestamp, ctx, centerX, centerY, width, height)
+  })
 }
 
 </script>
