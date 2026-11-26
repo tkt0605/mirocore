@@ -91,6 +91,16 @@ function drawFace(
   drawMouth(ctx, centerX, centerY, mouthOffsetY, mouthCurve, mouthWidth)
 }
 
+function AnimateMirocFace(timestamp: number): void{
+  // 前の描写の削除
+
+  // opennessの計算・更新
+
+  // drawFace()を呼び出す
+  
+  // 次のフレームの呼び出し
+}
+
 </script>
 
 <template>
