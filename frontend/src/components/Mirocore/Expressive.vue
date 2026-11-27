@@ -14,6 +14,8 @@ const props = withDefaults(
   }
 )
 
+const botStatus = ref<"idle" | "speaking" | "thinking" | "listening" | "offline" >("idle")
+
 onMounted(() => {
   const canvas =  expressiveCanvas.value
   if (!canvas) return
