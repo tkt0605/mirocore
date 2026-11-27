@@ -2,14 +2,28 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 
 const expressiveCanvas = ref<HTMLCanvasElement | null>(null);
+let animationFrameId: number | null = null;
+let startTime: number | null = null;
+
+const props = withDefaults(
+  defineProps<{
+    faceSize?: number
+  }>(),
+  {
+    faceSize: 200
+  }
+)
 
 onMounted(() => {
   const canvas =  expressiveCanvas.value
   if (!canvas) return
   const dpr = window.devicePixelRatio || 1
 
-  const width = canvas.clientWidth
+  const baseWidth = 200
+  const baseHeight = 100
+  const width = props.faceSize
   const height = width / 2
+  const scale = width / baseWidth
 
   canvas.width = Math.round(width * dpr)
   canvas.height = Math.round(height * dpr)
@@ -17,15 +31,17 @@ onMounted(() => {
   canvas.style.height = `${height}px`
   canvas.style.width = `${width}px`
 
-  const centerX = width / 2
-  const centerY = height / 2
+  const centerX = baseWidth / 2
+  const centerY = baseHeight / 2
   const ctx =canvas.getContext('2d')
   if(!ctx) return
 
   // ctx.scale(dpr, dpr)
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  ctx.setTransform(dpr*scale, 0, 0, dpr*scale, 0, 0)
   // drawFace(ctx, centerX, centerY, 1)
-  MirocFaceAnimation(0, ctx, centerX, centerY, width, height)
+  animationFrameId = requestAnimationFrame((timestamp) => {
+    MirocFaceAnimation(timestamp, ctx, centerX, centerY, baseWidth, baseHeight)
+  })
 })
 
 function drawEyes(
@@ -117,17 +133,26 @@ function MirocFaceAnimation(
   width: number,
   height: number,
 ): void{
+  if(startTime === null){
+    startTime = timestamp
+  }
+  const elapsed = timestamp - startTime
   // 前の描写の削除
   ctx.clearRect(0, 0, width, height)
   // opennessの計算・更新
-  const newOpenness = calculateOpenness(timestamp)
+  const newOpenness = calculateOpenness(elapsed)
   // drawFace()を呼び出す
   drawFace(ctx, centerX, centerY, newOpenness)
   // 次のフレームの呼び出し
-  requestAnimationFrame((timestamp) =>{
+  animationFrameId = requestAnimationFrame((timestamp) =>{
     MirocFaceAnimation(timestamp, ctx, centerX, centerY, width, height)
   })
 }
+onUnmounted(() => {
+  if(animationFrameId !== null){
+    cancelAnimationFrame(animationFrameId)
+  }
+})
 
 </script>
 
@@ -144,6 +169,8 @@ function MirocFaceAnimation(
 <style scoped>
 .expressive {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 #expressive-canvas {
