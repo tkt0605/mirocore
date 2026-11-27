@@ -27,7 +27,7 @@ const submitPrompt = (text: string) => {
 <template>
     <div class="home-container">
         <section class="home-sections">
-            <Expressive />
+            <Expressive :face-size="300" />
             <PromptBar @submit-prompt="submitPrompt" />
         </section>
         <ModeSlecter @submit-mode="SelectedMode" />
@@ -94,7 +94,7 @@ const submitPrompt = (text: string) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 25px;
 }
 
 .home-sections :deep(#expressive-canvas) {

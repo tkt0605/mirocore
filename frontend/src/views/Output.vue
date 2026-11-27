@@ -153,7 +153,7 @@ const deleteMemory = async(user: string, prompt: string): Promise<void> => {
 <template>
     <div class="output-container">
         <section class="output-expressive">
-            <Expressive/>
+            <Expressive :face-size="96"/>
         </section>
         <section class="output-board">
             <!-- 出力表示ボード -->
